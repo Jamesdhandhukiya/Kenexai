@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg: #F4F7FB;
+  --color-card: #FFFFFF;
+  --color-text: #0F172A;
+  --color-text-muted: #64748B;
+  --color-input-border: #E2E8F0;
+  --color-input-bg: #F8FAFC;
+  --color-accent: #7C3AED;
+  --color-accent-light: #EDE9FE;
+  --color-accent-pink: #B45B9E;
+  --color-btn-start: #15223A;
+  --color-btn-end: #2A3B5C;
+  --hero-start: #7A89DE;
+  --hero-mid: #B45B9E;
+  --hero-end: #15223A;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-hero: 0 30px 60px rgba(21, 34, 58, 0.18);
+  --radius: 16px;
+  --sidebar-w: 260px;
+  --navbar-h: 64px;
+
+  /* Status colors */
+  --color-success: #059669;
+  --color-success-bg: rgba(16, 185, 129, 0.08);
+  --color-warning: #d97706;
+  --color-warning-bg: rgba(245, 158, 11, 0.08);
+  --color-danger: #dc2626;
+  --color-danger-bg: rgba(239, 68, 68, 0.08);
+  --color-info: #1D4ED8;
+  --color-info-bg: rgba(29, 78, 216, 0.08);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

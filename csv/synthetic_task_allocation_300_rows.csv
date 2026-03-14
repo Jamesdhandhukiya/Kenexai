@@ -1,0 +1,301 @@
+Task_ID,Task_Name,Task_Category,Tech_Stack,Intern_Name,Email_ID,Mentor_Name,Priority,Complexity,Estimated_Hours,Assigned_Date,Start_Date,Deadline,Completion_Date,Status,Progress_Percentage,Task_Score,Quality_Rating,Delay_Days,Feedback
+T001,Database Schema Design,Deployment,React,Vivaan,intern1@example.com,Priya Mehta,Low,Hard,30,28-01-2026,28-01-2026,30-01-2026,02-02-2026,Completed,100,72,3.25,3,On track
+T002,User Authentication,Development,Django,Krishna,intern2@example.com,Rahul Shah,Low,Easy,33,27-01-2026,29-01-2026,06-02-2026,,Not Started,0,54,2.64,0,Needs improvement
+T003,API Integration,Documentation,Python,Aditya,intern3@example.com,Ankit Patel,Low,Hard,21,11-04-2026,12-04-2026,19-04-2026,,Blocked,31,95,2.74,0,Well documented
+T004,API Integration,Testing,Angular,Krishna,intern4@example.com,Karan Trivedi,Critical,Easy,40,19-01-2026,20-01-2026,27-01-2026,,Blocked,43,66,2.86,0,Delayed due to dependency
+T005,Database Schema Design,Research,PostgreSQL,Rohan,intern5@example.com,Karan Trivedi,High,Medium,23,01-04-2026,02-04-2026,05-04-2026,,Blocked,51,78,3.42,0,Well documented
+T006,Optimize Queries,Documentation,Angular,Dev,intern6@example.com,Ankit Patel,Low,Easy,38,07-02-2026,09-02-2026,14-02-2026,,In Progress,42,67,3.7,0,Requires refactoring
+T007,Database Schema Design,Deployment,MongoDB,Aarav,intern7@example.com,Rahul Shah,Low,Hard,15,29-01-2026,31-01-2026,07-02-2026,,In Progress,71,54,4.69,0,Code quality good
+T008,Database Schema Design,Development,Flask,Neel,intern8@example.com,Sneha Desai,High,Medium,12,11-04-2026,13-04-2026,16-04-2026,,In Progress,54,77,4.33,0,Delayed due to dependency
+T009,Bug Fix Payment Module,Deployment,PostgreSQL,Kunal,intern9@example.com,Sneha Desai,Low,Medium,6,30-03-2026,01-04-2026,03-04-2026,,Not Started,0,69,3.36,0,Needs improvement
+T010,Search Feature,Deployment,Flask,Aditya,intern10@example.com,Karan Trivedi,High,Hard,20,14-01-2026,16-01-2026,23-01-2026,,In Progress,53,72,4.93,0,Delayed due to dependency
+T011,Dashboard Development,Research,MongoDB,Ishaan,intern11@example.com,Karan Trivedi,Critical,Easy,8,27-01-2026,28-01-2026,03-02-2026,,Not Started,0,90,4.71,0,Requires refactoring
+T012,Implement Notifications,Development,Kubernetes,Ishaan,intern12@example.com,Ankit Patel,Low,Easy,33,03-03-2026,03-03-2026,11-03-2026,,Not Started,0,54,2.95,0,Requires refactoring
+T013,Data Cleaning Script,Research,MongoDB,Kunal,intern13@example.com,Rahul Shah,Critical,Easy,36,15-04-2026,16-04-2026,21-04-2026,,Blocked,43,73,3.72,0,Needs improvement
+T014,Bug Fix Payment Module,Testing,AWS,Aarav,intern14@example.com,Ankit Patel,Low,Easy,28,16-04-2026,18-04-2026,23-04-2026,,In Progress,88,55,3.54,0,Code quality good
+T015,Cache Optimization,Development,AWS,Dev,intern15@example.com,Ankit Patel,Medium,Easy,21,28-02-2026,28-02-2026,06-03-2026,,Not Started,0,80,4.26,0,Needs improvement
+T016,User Authentication,Testing,Angular,Aditya,intern16@example.com,Rahul Shah,Low,Easy,27,24-02-2026,26-02-2026,28-02-2026,,Blocked,15,52,4.31,0,Needs improvement
+T017,Cache Optimization,Deployment,React,Aryan,intern17@example.com,Sneha Desai,Low,Medium,7,16-03-2026,18-03-2026,28-03-2026,26-03-2026,Completed,100,92,4.83,0,Good progress
+T018,Implement Notifications,Deployment,.NET,Krishna,intern18@example.com,Sneha Desai,Medium,Hard,10,28-03-2026,30-03-2026,03-04-2026,,Not Started,0,69,3.66,0,Needs improvement
+T019,Create Landing Page,Testing,Django,Aditya,intern19@example.com,Ankit Patel,High,Hard,36,21-04-2026,21-04-2026,23-04-2026,,Not Started,0,94,3.2,0,Needs improvement
+T020,Cache Optimization,Testing,AWS,Aarav,intern20@example.com,Karan Trivedi,High,Medium,36,28-03-2026,30-03-2026,02-04-2026,,In Progress,42,73,4.6,0,Needs improvement
+T021,User Authentication,Testing,Docker,Rohan,intern21@example.com,Karan Trivedi,High,Hard,40,05-02-2026,07-02-2026,14-02-2026,,In Progress,63,91,4.65,0,On track
+T022,Implement Notifications,Research,PostgreSQL,Kunal,intern22@example.com,Karan Trivedi,Medium,Medium,27,08-04-2026,10-04-2026,18-04-2026,,Not Started,0,68,3.33,0,Good progress
+T023,Login Page UI,Deployment,AWS,Harsh,intern23@example.com,Ankit Patel,Low,Easy,37,27-04-2026,29-04-2026,04-05-2026,,Blocked,24,84,4.74,0,Excellent work
+T024,Dashboard Development,Development,MongoDB,Kunal,intern24@example.com,Ankit Patel,Critical,Hard,6,14-04-2026,14-04-2026,20-04-2026,,Not Started,0,83,4.32,0,Needs improvement
+T025,Analytics Chart Module,Testing,PostgreSQL,Rohan,intern25@example.com,Rahul Shah,Low,Easy,5,30-01-2026,01-02-2026,06-02-2026,,In Progress,70,86,4.88,0,Excellent work
+T026,Optimize Queries,Research,MongoDB,Aarav,intern26@example.com,Sneha Desai,High,Hard,35,03-01-2026,04-01-2026,08-01-2026,,In Progress,50,59,3.91,0,Requires refactoring
+T027,API Integration,Testing,MongoDB,Aryan,intern27@example.com,Sneha Desai,High,Easy,13,14-04-2026,15-04-2026,25-04-2026,,In Progress,85,91,3.11,0,Well documented
+T028,Cache Optimization,Research,PostgreSQL,Kunal,intern28@example.com,Ankit Patel,Critical,Easy,9,04-01-2026,04-01-2026,07-01-2026,,In Progress,63,80,3.18,0,Excellent work
+T029,Deploy CI/CD Pipeline,Testing,Python,Neel,intern29@example.com,Karan Trivedi,Medium,Hard,27,23-01-2026,24-01-2026,27-01-2026,,Not Started,0,59,3.41,0,Needs improvement
+T030,Write Unit Tests,Deployment,PostgreSQL,Aarav,intern30@example.com,Karan Trivedi,Medium,Medium,35,02-02-2026,04-02-2026,10-02-2026,08-02-2026,Completed,100,92,2.8,0,Excellent work
+T031,Login Page UI,Documentation,Docker,Neel,intern31@example.com,Karan Trivedi,Low,Hard,34,21-03-2026,21-03-2026,27-03-2026,25-03-2026,Completed,100,77,3.53,0,Good progress
+T032,Data Cleaning Script,Research,AWS,Krishna,intern32@example.com,Karan Trivedi,Low,Medium,29,01-04-2026,03-04-2026,12-04-2026,06-04-2026,Completed,100,99,4.09,0,Code quality good
+T033,API Integration,Testing,Node.js,Vivaan,intern33@example.com,Sneha Desai,Low,Easy,6,18-02-2026,19-02-2026,28-02-2026,,Not Started,0,55,2.53,0,Requires refactoring
+T034,Profile Page UI,Deployment,React,Rohan,intern34@example.com,Sneha Desai,Low,Medium,39,24-03-2026,25-03-2026,02-04-2026,,Not Started,0,98,3,0,Needs improvement
+T035,Bug Fix Payment Module,Testing,MongoDB,Krishna,intern35@example.com,Rahul Shah,Low,Medium,36,04-02-2026,04-02-2026,06-02-2026,,Not Started,0,70,4.81,0,Excellent work
+T036,User Authentication,Testing,.NET,Aarav,intern36@example.com,Karan Trivedi,Low,Medium,33,25-03-2026,26-03-2026,29-03-2026,,In Progress,75,57,3.36,0,Code quality good
+T037,Bug Fix Payment Module,Development,Django,Aditya,intern37@example.com,Karan Trivedi,Critical,Medium,34,11-01-2026,13-01-2026,19-01-2026,,In Progress,41,88,3.12,0,Requires refactoring
+T038,API Integration,Development,Docker,Krishna,intern38@example.com,Priya Mehta,Low,Easy,24,23-03-2026,23-03-2026,01-04-2026,,Not Started,0,72,4.6,0,On track
+T039,Search Feature,Deployment,Node.js,Kunal,intern39@example.com,Sneha Desai,Critical,Hard,28,17-04-2026,18-04-2026,24-04-2026,,In Progress,84,89,4.15,0,Delayed due to dependency
+T040,Login Page UI,Testing,Python,Aarav,intern40@example.com,Rahul Shah,Medium,Medium,32,23-02-2026,24-02-2026,02-03-2026,26-02-2026,Completed,100,61,3.4,0,Requires refactoring
+T041,Write Unit Tests,Deployment,AWS,Krishna,intern41@example.com,Rahul Shah,Medium,Easy,9,18-03-2026,18-03-2026,26-03-2026,,Blocked,54,59,2.73,0,Needs improvement
+T042,Dashboard Development,Research,MongoDB,Harsh,intern42@example.com,Sneha Desai,High,Easy,25,11-01-2026,12-01-2026,21-01-2026,,Not Started,0,67,3.75,0,On track
+T043,User Authentication,Documentation,Python,Rohan,intern43@example.com,Ankit Patel,Medium,Medium,14,06-02-2026,08-02-2026,13-02-2026,15-02-2026,Completed,100,62,3.89,2,Excellent work
+T044,Implement Notifications,Testing,MongoDB,Aarav,intern44@example.com,Ankit Patel,Critical,Hard,39,14-03-2026,16-03-2026,21-03-2026,,Not Started,0,96,4.32,0,Good progress
+T045,Write Unit Tests,Testing,.NET,Yash,intern45@example.com,Sneha Desai,Medium,Medium,9,20-04-2026,20-04-2026,29-04-2026,29-04-2026,Completed,100,99,3.59,0,Well documented
+T046,Dashboard Development,Documentation,Node.js,Aryan,intern46@example.com,Karan Trivedi,High,Hard,29,07-02-2026,08-02-2026,17-02-2026,,Blocked,46,100,3.82,0,Needs improvement
+T047,Create Landing Page,Testing,.NET,Harsh,intern47@example.com,Rahul Shah,Medium,Medium,18,01-05-2026,01-05-2026,10-05-2026,,In Progress,77,58,3.66,0,On track
+T048,Login Page UI,Development,Python,Aryan,intern48@example.com,Priya Mehta,Medium,Easy,4,24-02-2026,25-02-2026,06-03-2026,07-03-2026,Completed,100,72,3.42,1,Needs improvement
+T049,Database Schema Design,Research,Django,Aditya,intern49@example.com,Karan Trivedi,Medium,Hard,40,08-02-2026,10-02-2026,15-02-2026,13-02-2026,Completed,100,91,4.46,0,Needs improvement
+T050,Optimize Queries,Development,MongoDB,Neel,intern50@example.com,Karan Trivedi,Medium,Medium,29,24-03-2026,26-03-2026,29-03-2026,02-04-2026,Completed,100,71,3.57,4,Code quality good
+T051,Dashboard Development,Documentation,Django,Aryan,intern51@example.com,Rahul Shah,Medium,Easy,13,26-02-2026,28-02-2026,10-03-2026,,Not Started,0,67,3.83,0,On track
+T052,Cache Optimization,Deployment,Flask,Aditya,intern52@example.com,Priya Mehta,High,Easy,22,07-03-2026,07-03-2026,10-03-2026,,Not Started,0,56,4.49,0,Well documented
+T053,Deploy CI/CD Pipeline,Testing,Flask,Harsh,intern53@example.com,Karan Trivedi,Low,Hard,37,28-02-2026,28-02-2026,05-03-2026,,Blocked,42,61,3.83,0,Well documented
+T054,Implement Notifications,Research,React,Neel,intern54@example.com,Ankit Patel,Medium,Medium,21,11-04-2026,11-04-2026,13-04-2026,,In Progress,74,74,3.23,0,Well documented
+T055,Analytics Chart Module,Development,Django,Dev,intern55@example.com,Rahul Shah,Low,Hard,19,02-03-2026,03-03-2026,10-03-2026,05-03-2026,Completed,100,52,4.65,0,Code quality good
+T056,Profile Page UI,Testing,Kubernetes,Aryan,intern56@example.com,Priya Mehta,Medium,Easy,22,07-03-2026,09-03-2026,15-03-2026,,In Progress,82,86,4.79,0,Delayed due to dependency
+T057,Login Page UI,Research,Django,Kunal,intern57@example.com,Rahul Shah,Medium,Medium,27,08-01-2026,08-01-2026,17-01-2026,17-01-2026,Completed,100,95,4.89,0,Excellent work
+T058,Create Landing Page,Deployment,MongoDB,Krishna,intern58@example.com,Rahul Shah,Low,Easy,29,25-04-2026,27-04-2026,06-05-2026,,In Progress,62,98,3.7,0,Good progress
+T059,Deploy CI/CD Pipeline,Deployment,Django,Harsh,intern59@example.com,Rahul Shah,Low,Hard,17,21-02-2026,23-02-2026,05-03-2026,,Blocked,23,73,4.82,0,On track
+T060,Search Feature,Development,React,Vivaan,intern60@example.com,Rahul Shah,High,Easy,30,16-01-2026,16-01-2026,21-01-2026,,Blocked,27,90,2.67,0,Requires refactoring
+T061,Analytics Chart Module,Research,Django,Krishna,intern61@example.com,Karan Trivedi,Low,Easy,16,08-03-2026,08-03-2026,17-03-2026,,Not Started,0,54,4.32,0,Excellent work
+T062,Bug Fix Payment Module,Testing,Angular,Rohan,intern62@example.com,Ankit Patel,Critical,Hard,24,15-04-2026,17-04-2026,20-04-2026,,Not Started,0,84,4.56,0,Requires refactoring
+T063,Data Cleaning Script,Development,AWS,Krishna,intern63@example.com,Sneha Desai,Medium,Hard,34,03-03-2026,03-03-2026,13-03-2026,,Not Started,0,89,4.06,0,Well documented
+T064,Bug Fix Payment Module,Research,Python,Vivaan,intern64@example.com,Rahul Shah,Critical,Hard,36,29-01-2026,29-01-2026,08-02-2026,04-02-2026,Completed,100,50,2.66,0,On track
+T065,API Integration,Deployment,Django,Aarav,intern65@example.com,Sneha Desai,High,Hard,40,22-01-2026,22-01-2026,01-02-2026,,Blocked,47,80,4.7,0,Requires refactoring
+T066,Write Unit Tests,Deployment,Django,Neel,intern66@example.com,Priya Mehta,High,Easy,40,06-03-2026,08-03-2026,12-03-2026,,Not Started,0,77,4.61,0,Code quality good
+T067,User Authentication,Documentation,PostgreSQL,Rohan,intern67@example.com,Rahul Shah,High,Medium,31,10-04-2026,10-04-2026,12-04-2026,,Not Started,0,86,4.56,0,Delayed due to dependency
+T068,Write Unit Tests,Deployment,Kubernetes,Aryan,intern68@example.com,Sneha Desai,Critical,Hard,11,06-04-2026,07-04-2026,16-04-2026,11-04-2026,Completed,100,76,2.79,0,Code quality good
+T069,Implement Notifications,Development,MongoDB,Krishna,intern69@example.com,Priya Mehta,Medium,Medium,37,05-01-2026,07-01-2026,10-01-2026,,In Progress,72,69,4.22,0,Requires refactoring
+T070,Create Landing Page,Research,AWS,Rohan,intern70@example.com,Rahul Shah,Medium,Easy,40,07-03-2026,07-03-2026,14-03-2026,,Blocked,35,74,4.44,0,On track
+T071,Cache Optimization,Documentation,Kubernetes,Aditya,intern71@example.com,Sneha Desai,Medium,Medium,21,24-03-2026,25-03-2026,04-04-2026,,Not Started,0,74,2.72,0,Requires refactoring
+T072,Database Schema Design,Deployment,.NET,Rohan,intern72@example.com,Priya Mehta,Medium,Medium,37,02-01-2026,04-01-2026,06-01-2026,,Not Started,0,81,2.71,0,Requires refactoring
+T073,Data Cleaning Script,Testing,PostgreSQL,Yash,intern73@example.com,Priya Mehta,High,Easy,28,12-04-2026,13-04-2026,23-04-2026,,In Progress,83,76,2.67,0,Requires refactoring
+T074,Create Landing Page,Testing,React,Yash,intern74@example.com,Karan Trivedi,Low,Easy,22,06-01-2026,08-01-2026,10-01-2026,,In Progress,73,66,3.54,0,Good progress
+T075,Deploy CI/CD Pipeline,Deployment,Python,Dev,intern75@example.com,Rahul Shah,Critical,Hard,10,02-01-2026,03-01-2026,07-01-2026,,Blocked,40,88,4.56,0,Needs improvement
+T076,Optimize Queries,Documentation,Django,Kunal,intern76@example.com,Karan Trivedi,Low,Easy,11,05-03-2026,07-03-2026,14-03-2026,15-03-2026,Completed,100,66,4.19,1,Excellent work
+T077,Data Cleaning Script,Deployment,Kubernetes,Krishna,intern77@example.com,Priya Mehta,Medium,Easy,29,30-04-2026,02-05-2026,05-05-2026,,Not Started,0,64,2.61,0,Delayed due to dependency
+T078,Profile Page UI,Development,Docker,Aditya,intern78@example.com,Ankit Patel,Medium,Easy,16,11-03-2026,13-03-2026,19-03-2026,,Blocked,57,66,3.13,0,On track
+T079,Database Schema Design,Research,MongoDB,Vivaan,intern79@example.com,Ankit Patel,Low,Hard,11,20-03-2026,20-03-2026,28-03-2026,,Not Started,0,57,3.82,0,Excellent work
+T080,Write Unit Tests,Documentation,PostgreSQL,Vivaan,intern80@example.com,Rahul Shah,Medium,Medium,18,01-03-2026,02-03-2026,06-03-2026,,In Progress,71,61,4.78,0,Code quality good
+T081,Profile Page UI,Development,Node.js,Ishaan,intern81@example.com,Karan Trivedi,Critical,Hard,35,30-04-2026,02-05-2026,04-05-2026,12-05-2026,Completed,100,60,4.24,8,Excellent work
+T082,Dashboard Development,Development,MongoDB,Krishna,intern82@example.com,Karan Trivedi,High,Hard,4,02-04-2026,04-04-2026,14-04-2026,,Not Started,0,89,3.29,0,Delayed due to dependency
+T083,Cache Optimization,Research,.NET,Aditya,intern83@example.com,Priya Mehta,High,Easy,23,22-01-2026,23-01-2026,01-02-2026,27-01-2026,Completed,100,81,3.25,0,Excellent work
+T084,Analytics Chart Module,Research,Django,Krishna,intern84@example.com,Sneha Desai,High,Easy,27,01-02-2026,02-02-2026,10-02-2026,10-02-2026,Completed,100,69,4.67,0,Needs improvement
+T085,Optimize Queries,Testing,Django,Krishna,intern85@example.com,Karan Trivedi,Medium,Hard,15,28-02-2026,28-02-2026,07-03-2026,04-03-2026,Completed,100,97,3.88,0,Good progress
+T086,Cache Optimization,Research,Node.js,Aarav,intern86@example.com,Karan Trivedi,Medium,Hard,35,25-03-2026,27-03-2026,05-04-2026,,In Progress,62,84,3.55,0,Needs improvement
+T087,Cache Optimization,Development,Docker,Aarav,intern87@example.com,Priya Mehta,Critical,Hard,12,26-03-2026,28-03-2026,06-04-2026,03-04-2026,Completed,100,74,4.07,0,Requires refactoring
+T088,Database Schema Design,Research,Python,Rohan,intern88@example.com,Rahul Shah,High,Hard,20,09-01-2026,10-01-2026,19-01-2026,,Blocked,17,68,2.64,0,On track
+T089,Bug Fix Payment Module,Testing,Kubernetes,Aarav,intern89@example.com,Priya Mehta,Low,Easy,12,10-04-2026,12-04-2026,20-04-2026,20-04-2026,Completed,100,99,4.91,0,Requires refactoring
+T090,User Authentication,Testing,Python,Rohan,intern90@example.com,Priya Mehta,High,Hard,35,03-02-2026,05-02-2026,08-02-2026,,Not Started,0,65,2.62,0,Good progress
+T091,Search Feature,Testing,Angular,Kunal,intern91@example.com,Rahul Shah,Medium,Hard,27,23-02-2026,24-02-2026,28-02-2026,28-02-2026,Completed,100,55,4.37,0,On track
+T092,Cache Optimization,Testing,Flask,Aryan,intern92@example.com,Rahul Shah,Critical,Hard,4,11-04-2026,13-04-2026,20-04-2026,,In Progress,60,57,3.85,0,Code quality good
+T093,Implement Notifications,Deployment,.NET,Aryan,intern93@example.com,Sneha Desai,Critical,Hard,18,12-03-2026,14-03-2026,23-03-2026,21-03-2026,Completed,100,84,3.51,0,Delayed due to dependency
+T094,Profile Page UI,Documentation,AWS,Yash,intern94@example.com,Rahul Shah,Low,Easy,26,06-04-2026,06-04-2026,10-04-2026,,Not Started,0,51,4.46,0,Code quality good
+T095,User Authentication,Research,PostgreSQL,Aditya,intern95@example.com,Sneha Desai,Critical,Medium,40,01-01-2026,03-01-2026,06-01-2026,,Not Started,0,78,4.37,0,Needs improvement
+T096,Cache Optimization,Deployment,Flask,Harsh,intern96@example.com,Karan Trivedi,Medium,Hard,6,10-04-2026,10-04-2026,15-04-2026,,Not Started,0,62,3.08,0,On track
+T097,Bug Fix Payment Module,Documentation,Docker,Harsh,intern97@example.com,Priya Mehta,Medium,Medium,10,19-02-2026,20-02-2026,02-03-2026,28-02-2026,Completed,100,66,2.76,0,On track
+T098,Data Cleaning Script,Testing,PostgreSQL,Yash,intern98@example.com,Priya Mehta,High,Hard,5,28-03-2026,30-03-2026,03-04-2026,08-04-2026,Completed,100,56,2.78,5,Excellent work
+T099,Login Page UI,Research,React,Aditya,intern99@example.com,Karan Trivedi,Low,Medium,37,19-04-2026,21-04-2026,23-04-2026,25-04-2026,Completed,100,99,2.64,2,On track
+T100,Optimize Queries,Deployment,Django,Dev,intern100@example.com,Rahul Shah,Critical,Hard,31,19-03-2026,20-03-2026,30-03-2026,,In Progress,41,57,3.77,0,Delayed due to dependency
+T101,Profile Page UI,Deployment,AWS,Neel,intern101@example.com,Karan Trivedi,Low,Hard,7,24-03-2026,24-03-2026,27-03-2026,,In Progress,49,51,3.91,0,Good progress
+T102,Data Cleaning Script,Development,AWS,Rohan,intern102@example.com,Sneha Desai,Low,Medium,17,14-01-2026,15-01-2026,20-01-2026,25-01-2026,Completed,100,68,4.11,5,Needs improvement
+T103,Cache Optimization,Testing,PostgreSQL,Yash,intern103@example.com,Ankit Patel,Critical,Easy,11,27-03-2026,29-03-2026,31-03-2026,,Not Started,0,68,2.91,0,Delayed due to dependency
+T104,Bug Fix Payment Module,Testing,MongoDB,Aarav,intern104@example.com,Priya Mehta,Medium,Hard,37,12-02-2026,13-02-2026,18-02-2026,,In Progress,42,54,3.45,0,Code quality good
+T105,Profile Page UI,Research,Node.js,Aditya,intern105@example.com,Sneha Desai,High,Medium,26,19-04-2026,19-04-2026,24-04-2026,,In Progress,40,54,4.49,0,Needs improvement
+T106,Implement Notifications,Development,Kubernetes,Aarav,intern106@example.com,Sneha Desai,High,Easy,17,10-03-2026,12-03-2026,14-03-2026,,Not Started,0,75,4.22,0,Requires refactoring
+T107,Bug Fix Payment Module,Deployment,Django,Harsh,intern107@example.com,Karan Trivedi,High,Hard,24,10-02-2026,10-02-2026,12-02-2026,18-02-2026,Completed,100,62,2.53,6,Delayed due to dependency
+T108,Optimize Queries,Deployment,Django,Rohan,intern108@example.com,Priya Mehta,High,Hard,29,24-03-2026,24-03-2026,31-03-2026,26-03-2026,Completed,100,60,4.49,0,Delayed due to dependency
+T109,Bug Fix Payment Module,Research,React,Dev,intern109@example.com,Karan Trivedi,Low,Hard,39,10-01-2026,10-01-2026,15-01-2026,,Not Started,0,70,2.91,0,Well documented
+T110,API Integration,Development,Docker,Ishaan,intern110@example.com,Ankit Patel,Medium,Easy,10,01-03-2026,02-03-2026,11-03-2026,,Blocked,37,86,3.26,0,On track
+T111,Implement Notifications,Testing,Node.js,Harsh,intern111@example.com,Priya Mehta,Medium,Hard,21,10-01-2026,12-01-2026,19-01-2026,,Not Started,0,57,3.75,0,Code quality good
+T112,API Integration,Deployment,Django,Aarav,intern112@example.com,Sneha Desai,High,Easy,18,04-02-2026,05-02-2026,10-02-2026,,Not Started,0,93,3.08,0,Good progress
+T113,Search Feature,Research,Angular,Aryan,intern113@example.com,Priya Mehta,Low,Medium,36,12-03-2026,14-03-2026,19-03-2026,24-03-2026,Completed,100,66,2.64,5,Requires refactoring
+T114,Profile Page UI,Research,Python,Vivaan,intern114@example.com,Ankit Patel,High,Easy,18,03-04-2026,03-04-2026,12-04-2026,,Not Started,0,82,3.28,0,Code quality good
+T115,Implement Notifications,Documentation,Kubernetes,Aditya,intern115@example.com,Ankit Patel,Medium,Easy,23,13-03-2026,14-03-2026,23-03-2026,21-03-2026,Completed,100,94,2.85,0,Requires refactoring
+T116,API Integration,Deployment,Docker,Ishaan,intern116@example.com,Rahul Shah,High,Medium,5,23-04-2026,24-04-2026,04-05-2026,,Blocked,10,92,4.67,0,Requires refactoring
+T117,Write Unit Tests,Documentation,.NET,Harsh,intern117@example.com,Priya Mehta,Low,Easy,22,15-01-2026,15-01-2026,24-01-2026,23-01-2026,Completed,100,84,4.81,0,Code quality good
+T118,Create Landing Page,Testing,Kubernetes,Rohan,intern118@example.com,Ankit Patel,Critical,Medium,35,18-04-2026,18-04-2026,22-04-2026,,Not Started,0,56,4.18,0,On track
+T119,Database Schema Design,Research,.NET,Aditya,intern119@example.com,Sneha Desai,Low,Easy,24,27-03-2026,28-03-2026,06-04-2026,,In Progress,54,69,4.5,0,Excellent work
+T120,Dashboard Development,Deployment,AWS,Vivaan,intern120@example.com,Ankit Patel,Critical,Hard,28,19-03-2026,19-03-2026,24-03-2026,20-03-2026,Completed,100,76,4.22,0,Well documented
+T121,Bug Fix Payment Module,Testing,Node.js,Neel,intern121@example.com,Rahul Shah,Low,Hard,29,19-04-2026,20-04-2026,29-04-2026,,Blocked,31,91,4.6,0,On track
+T122,Implement Notifications,Deployment,.NET,Aditya,intern122@example.com,Priya Mehta,High,Hard,12,19-02-2026,21-02-2026,03-03-2026,,In Progress,90,62,3.22,0,Delayed due to dependency
+T123,Database Schema Design,Research,React,Neel,intern123@example.com,Rahul Shah,Medium,Medium,37,14-01-2026,15-01-2026,18-01-2026,,Blocked,16,86,3.32,0,On track
+T124,User Authentication,Testing,.NET,Aarav,intern124@example.com,Ankit Patel,Low,Easy,29,22-01-2026,22-01-2026,30-01-2026,,Blocked,55,61,4.2,0,Good progress
+T125,API Integration,Documentation,Python,Aarav,intern125@example.com,Sneha Desai,Low,Hard,12,28-04-2026,28-04-2026,30-04-2026,,In Progress,67,98,2.69,0,Code quality good
+T126,Dashboard Development,Development,Python,Vivaan,intern126@example.com,Rahul Shah,High,Hard,37,04-01-2026,06-01-2026,11-01-2026,,In Progress,61,96,3.32,0,Needs improvement
+T127,Write Unit Tests,Testing,Docker,Neel,intern127@example.com,Karan Trivedi,Low,Easy,37,07-03-2026,08-03-2026,14-03-2026,,Blocked,16,85,2.91,0,On track
+T128,User Authentication,Development,Angular,Neel,intern128@example.com,Karan Trivedi,Low,Medium,9,19-03-2026,19-03-2026,24-03-2026,28-03-2026,Completed,100,100,3.2,4,Excellent work
+T129,Write Unit Tests,Deployment,Kubernetes,Vivaan,intern129@example.com,Rahul Shah,Low,Hard,39,24-01-2026,24-01-2026,28-01-2026,,In Progress,57,73,2.8,0,On track
+T130,Deploy CI/CD Pipeline,Development,Angular,Aryan,intern130@example.com,Priya Mehta,Low,Medium,35,19-04-2026,21-04-2026,27-04-2026,,Not Started,0,87,4.72,0,Requires refactoring
+T131,Create Landing Page,Research,Django,Aditya,intern131@example.com,Sneha Desai,Low,Easy,31,19-02-2026,21-02-2026,27-02-2026,,Not Started,0,90,4.11,0,Code quality good
+T132,API Integration,Research,AWS,Dev,intern132@example.com,Ankit Patel,High,Hard,30,29-01-2026,30-01-2026,08-02-2026,,Blocked,25,58,4.34,0,Requires refactoring
+T133,Cache Optimization,Development,AWS,Harsh,intern133@example.com,Sneha Desai,Critical,Easy,27,03-04-2026,05-04-2026,13-04-2026,,Blocked,13,59,3.16,0,Excellent work
+T134,Cache Optimization,Development,Python,Aditya,intern134@example.com,Rahul Shah,Low,Hard,12,25-04-2026,25-04-2026,29-04-2026,05-05-2026,Completed,100,84,3.53,6,Well documented
+T135,Create Landing Page,Documentation,Flask,Dev,intern135@example.com,Rahul Shah,Medium,Medium,33,15-01-2026,16-01-2026,18-01-2026,24-01-2026,Completed,100,65,3.97,6,Good progress
+T136,Optimize Queries,Development,Node.js,Aditya,intern136@example.com,Ankit Patel,High,Hard,18,01-05-2026,02-05-2026,09-05-2026,,Not Started,0,100,4.83,0,Good progress
+T137,Cache Optimization,Testing,PostgreSQL,Vivaan,intern137@example.com,Karan Trivedi,High,Medium,33,03-01-2026,03-01-2026,12-01-2026,,Blocked,51,67,3.37,0,Code quality good
+T138,Cache Optimization,Deployment,Docker,Yash,intern138@example.com,Rahul Shah,Medium,Medium,33,23-01-2026,23-01-2026,25-01-2026,,Blocked,48,99,4.53,0,Requires refactoring
+T139,Profile Page UI,Testing,Kubernetes,Kunal,intern139@example.com,Rahul Shah,Critical,Easy,8,14-03-2026,14-03-2026,24-03-2026,16-03-2026,Completed,100,93,3.85,0,Needs improvement
+T140,Login Page UI,Testing,Node.js,Neel,intern140@example.com,Priya Mehta,Medium,Easy,4,11-03-2026,12-03-2026,14-03-2026,15-03-2026,Completed,100,91,4.82,1,Code quality good
+T141,Create Landing Page,Development,AWS,Vivaan,intern141@example.com,Sneha Desai,High,Medium,10,18-04-2026,20-04-2026,25-04-2026,27-04-2026,Completed,100,98,2.61,2,On track
+T142,Write Unit Tests,Development,Python,Aditya,intern142@example.com,Priya Mehta,Medium,Hard,31,14-04-2026,15-04-2026,19-04-2026,,In Progress,57,81,2.79,0,Requires refactoring
+T143,Cache Optimization,Documentation,PostgreSQL,Kunal,intern143@example.com,Priya Mehta,Low,Medium,34,29-04-2026,01-05-2026,08-05-2026,,In Progress,73,91,4.69,0,Delayed due to dependency
+T144,Write Unit Tests,Research,Kubernetes,Aryan,intern144@example.com,Karan Trivedi,Critical,Hard,20,23-03-2026,25-03-2026,04-04-2026,,In Progress,49,98,3.46,0,On track
+T145,Create Landing Page,Development,Kubernetes,Harsh,intern145@example.com,Karan Trivedi,Medium,Hard,11,16-01-2026,17-01-2026,24-01-2026,,Not Started,0,81,4.03,0,Good progress
+T146,Write Unit Tests,Research,Node.js,Harsh,intern146@example.com,Sneha Desai,Critical,Easy,6,12-03-2026,12-03-2026,22-03-2026,,In Progress,46,86,4.95,0,On track
+T147,Write Unit Tests,Development,Django,Ishaan,intern147@example.com,Rahul Shah,Medium,Hard,33,07-02-2026,07-02-2026,16-02-2026,,Blocked,17,63,3.29,0,Well documented
+T148,Analytics Chart Module,Deployment,Python,Aryan,intern148@example.com,Ankit Patel,Critical,Medium,26,10-02-2026,12-02-2026,16-02-2026,15-02-2026,Completed,100,100,4.66,0,Excellent work
+T149,Optimize Queries,Testing,PostgreSQL,Krishna,intern149@example.com,Sneha Desai,High,Medium,17,26-03-2026,27-03-2026,03-04-2026,,Not Started,0,71,3.56,0,On track
+T150,Data Cleaning Script,Testing,PostgreSQL,Aditya,intern150@example.com,Ankit Patel,Low,Easy,37,08-03-2026,08-03-2026,11-03-2026,,Not Started,0,97,3.74,0,Well documented
+T151,Optimize Queries,Research,AWS,Krishna,intern151@example.com,Ankit Patel,Low,Medium,13,12-03-2026,12-03-2026,18-03-2026,,Blocked,51,88,4.51,0,Well documented
+T152,Write Unit Tests,Documentation,MongoDB,Yash,intern152@example.com,Karan Trivedi,Low,Easy,11,12-04-2026,13-04-2026,21-04-2026,,In Progress,89,57,3.77,0,Delayed due to dependency
+T153,Login Page UI,Deployment,AWS,Kunal,intern153@example.com,Sneha Desai,High,Hard,17,31-03-2026,02-04-2026,10-04-2026,08-04-2026,Completed,100,57,2.64,0,On track
+T154,Analytics Chart Module,Development,Angular,Ishaan,intern154@example.com,Sneha Desai,Low,Hard,13,07-04-2026,08-04-2026,12-04-2026,10-04-2026,Completed,100,61,3.31,0,Requires refactoring
+T155,Cache Optimization,Development,Python,Harsh,intern155@example.com,Priya Mehta,Critical,Medium,38,09-02-2026,11-02-2026,13-02-2026,,In Progress,82,62,4.15,0,Code quality good
+T156,Write Unit Tests,Testing,React,Aryan,intern156@example.com,Priya Mehta,High,Easy,32,17-02-2026,17-02-2026,24-02-2026,,In Progress,61,83,3.61,0,Delayed due to dependency
+T157,Write Unit Tests,Research,PostgreSQL,Yash,intern157@example.com,Sneha Desai,High,Hard,25,09-04-2026,09-04-2026,18-04-2026,,In Progress,46,82,2.7,0,Requires refactoring
+T158,Create Landing Page,Testing,Kubernetes,Ishaan,intern158@example.com,Rahul Shah,Critical,Easy,16,30-01-2026,31-01-2026,07-02-2026,,Blocked,52,76,4.69,0,Excellent work
+T159,Optimize Queries,Documentation,React,Harsh,intern159@example.com,Karan Trivedi,Medium,Easy,18,23-04-2026,25-04-2026,30-04-2026,04-05-2026,Completed,100,94,2.95,4,On track
+T160,Deploy CI/CD Pipeline,Deployment,.NET,Aryan,intern160@example.com,Ankit Patel,High,Easy,25,25-02-2026,25-02-2026,27-02-2026,,Not Started,0,86,4.96,0,Good progress
+T161,Profile Page UI,Development,React,Ishaan,intern161@example.com,Karan Trivedi,High,Medium,4,18-04-2026,20-04-2026,25-04-2026,,Not Started,0,53,4.27,0,Code quality good
+T162,API Integration,Deployment,Docker,Yash,intern162@example.com,Rahul Shah,Critical,Medium,32,05-01-2026,06-01-2026,11-01-2026,,In Progress,63,83,4.29,0,Needs improvement
+T163,Analytics Chart Module,Development,Django,Kunal,intern163@example.com,Priya Mehta,High,Medium,29,27-04-2026,28-04-2026,05-05-2026,,In Progress,82,85,4.75,0,Needs improvement
+T164,User Authentication,Deployment,React,Dev,intern164@example.com,Rahul Shah,Medium,Hard,27,01-04-2026,01-04-2026,07-04-2026,,Not Started,0,62,2.78,0,Code quality good
+T165,Create Landing Page,Testing,Flask,Rohan,intern165@example.com,Priya Mehta,Low,Medium,18,26-01-2026,28-01-2026,02-02-2026,,Blocked,31,98,2.67,0,Delayed due to dependency
+T166,User Authentication,Deployment,MongoDB,Ishaan,intern166@example.com,Ankit Patel,High,Medium,21,12-01-2026,14-01-2026,24-01-2026,,Blocked,37,65,3.51,0,Delayed due to dependency
+T167,API Integration,Testing,Node.js,Krishna,intern167@example.com,Karan Trivedi,Medium,Easy,23,06-01-2026,06-01-2026,16-01-2026,,In Progress,85,50,4.71,0,Delayed due to dependency
+T168,Bug Fix Payment Module,Deployment,Kubernetes,Krishna,intern168@example.com,Karan Trivedi,Critical,Medium,13,03-03-2026,04-03-2026,10-03-2026,06-03-2026,Completed,100,74,4.44,0,Needs improvement
+T169,Search Feature,Testing,MongoDB,Dev,intern169@example.com,Ankit Patel,Low,Easy,36,13-03-2026,13-03-2026,15-03-2026,,Blocked,57,89,3.59,0,Excellent work
+T170,Profile Page UI,Development,Docker,Dev,intern170@example.com,Rahul Shah,Medium,Medium,38,01-05-2026,02-05-2026,06-05-2026,07-05-2026,Completed,100,66,4.86,1,Good progress
+T171,Dashboard Development,Documentation,PostgreSQL,Aditya,intern171@example.com,Priya Mehta,High,Hard,4,31-01-2026,02-02-2026,12-02-2026,03-02-2026,Completed,100,81,3.89,0,Code quality good
+T172,User Authentication,Development,AWS,Yash,intern172@example.com,Karan Trivedi,Critical,Easy,37,03-03-2026,03-03-2026,13-03-2026,,In Progress,88,72,3.51,0,On track
+T173,Deploy CI/CD Pipeline,Development,Django,Aarav,intern173@example.com,Rahul Shah,Critical,Hard,13,22-02-2026,23-02-2026,25-02-2026,,Not Started,0,65,3.88,0,On track
+T174,Database Schema Design,Development,.NET,Kunal,intern174@example.com,Karan Trivedi,High,Medium,18,23-03-2026,25-03-2026,28-03-2026,29-03-2026,Completed,100,79,3.67,1,Needs improvement
+T175,Implement Notifications,Deployment,Python,Aarav,intern175@example.com,Karan Trivedi,Low,Hard,32,12-01-2026,12-01-2026,18-01-2026,,In Progress,47,100,2.91,0,Requires refactoring
+T176,Data Cleaning Script,Testing,.NET,Aarav,intern176@example.com,Ankit Patel,High,Easy,19,18-01-2026,19-01-2026,29-01-2026,,Not Started,0,62,3.77,0,Good progress
+T177,Deploy CI/CD Pipeline,Development,Angular,Aditya,intern177@example.com,Rahul Shah,Critical,Hard,6,20-03-2026,20-03-2026,28-03-2026,,In Progress,69,99,3.45,0,Excellent work
+T178,Dashboard Development,Documentation,PostgreSQL,Harsh,intern178@example.com,Rahul Shah,High,Easy,33,07-02-2026,08-02-2026,13-02-2026,,Blocked,28,78,3.77,0,Code quality good
+T179,Create Landing Page,Documentation,Docker,Neel,intern179@example.com,Priya Mehta,Medium,Medium,12,20-01-2026,22-01-2026,24-01-2026,23-01-2026,Completed,100,54,4.74,0,On track
+T180,Search Feature,Research,.NET,Krishna,intern180@example.com,Sneha Desai,High,Medium,28,22-03-2026,22-03-2026,26-03-2026,,In Progress,85,81,3.06,0,Good progress
+T181,Data Cleaning Script,Testing,Node.js,Yash,intern181@example.com,Ankit Patel,High,Medium,7,30-03-2026,30-03-2026,01-04-2026,,Blocked,24,65,4.52,0,Good progress
+T182,Implement Notifications,Testing,PostgreSQL,Kunal,intern182@example.com,Sneha Desai,Critical,Hard,33,20-01-2026,22-01-2026,31-01-2026,23-01-2026,Completed,100,71,3.93,0,On track
+T183,Database Schema Design,Development,MongoDB,Vivaan,intern183@example.com,Karan Trivedi,Low,Medium,23,02-01-2026,04-01-2026,12-01-2026,,Blocked,34,70,4.62,0,Well documented
+T184,Implement Notifications,Deployment,Flask,Aditya,intern184@example.com,Priya Mehta,Medium,Hard,8,08-04-2026,08-04-2026,18-04-2026,18-04-2026,Completed,100,73,3.47,0,Requires refactoring
+T185,Optimize Queries,Testing,PostgreSQL,Aditya,intern185@example.com,Priya Mehta,High,Easy,16,06-01-2026,06-01-2026,08-01-2026,08-01-2026,Completed,100,51,2.99,0,On track
+T186,Profile Page UI,Testing,PostgreSQL,Ishaan,intern186@example.com,Ankit Patel,High,Easy,5,17-01-2026,18-01-2026,25-01-2026,23-01-2026,Completed,100,86,4.61,0,Well documented
+T187,Create Landing Page,Research,React,Dev,intern187@example.com,Sneha Desai,High,Medium,8,25-01-2026,25-01-2026,30-01-2026,31-01-2026,Completed,100,51,4.23,1,Requires refactoring
+T188,Database Schema Design,Research,Python,Kunal,intern188@example.com,Rahul Shah,High,Hard,19,25-01-2026,27-01-2026,31-01-2026,28-01-2026,Completed,100,83,2.84,0,Code quality good
+T189,Cache Optimization,Deployment,Django,Yash,intern189@example.com,Sneha Desai,Critical,Hard,38,10-04-2026,12-04-2026,21-04-2026,,Blocked,58,93,2.84,0,Excellent work
+T190,Deploy CI/CD Pipeline,Research,Node.js,Ishaan,intern190@example.com,Ankit Patel,Critical,Medium,35,23-04-2026,23-04-2026,03-05-2026,,Blocked,39,95,3.04,0,Delayed due to dependency
+T191,Data Cleaning Script,Deployment,.NET,Kunal,intern191@example.com,Ankit Patel,Medium,Hard,36,11-03-2026,12-03-2026,18-03-2026,14-03-2026,Completed,100,74,4.62,0,Well documented
+T192,Bug Fix Payment Module,Development,AWS,Vivaan,intern192@example.com,Sneha Desai,Medium,Medium,36,21-03-2026,22-03-2026,27-03-2026,,Not Started,0,56,2.7,0,Needs improvement
+T193,Dashboard Development,Development,.NET,Neel,intern193@example.com,Sneha Desai,Critical,Easy,33,10-04-2026,10-04-2026,16-04-2026,,Not Started,0,52,4.17,0,Code quality good
+T194,Optimize Queries,Development,PostgreSQL,Aditya,intern194@example.com,Ankit Patel,Medium,Hard,22,03-02-2026,04-02-2026,11-02-2026,13-02-2026,Completed,100,91,3.44,2,Code quality good
+T195,Bug Fix Payment Module,Testing,Python,Aditya,intern195@example.com,Priya Mehta,Medium,Easy,22,18-04-2026,20-04-2026,29-04-2026,,Blocked,30,86,3.89,0,Code quality good
+T196,Analytics Chart Module,Development,PostgreSQL,Krishna,intern196@example.com,Sneha Desai,Medium,Medium,29,24-02-2026,26-02-2026,08-03-2026,01-03-2026,Completed,100,63,4.01,0,Requires refactoring
+T197,Bug Fix Payment Module,Development,Kubernetes,Vivaan,intern197@example.com,Ankit Patel,High,Medium,33,02-03-2026,04-03-2026,10-03-2026,06-03-2026,Completed,100,74,3.13,0,Delayed due to dependency
+T198,Login Page UI,Development,React,Krishna,intern198@example.com,Rahul Shah,Medium,Medium,31,05-01-2026,07-01-2026,17-01-2026,,Not Started,0,61,2.57,0,Requires refactoring
+T199,Dashboard Development,Research,Angular,Neel,intern199@example.com,Rahul Shah,Critical,Easy,37,30-03-2026,30-03-2026,09-04-2026,08-04-2026,Completed,100,99,4.99,0,Needs improvement
+T200,Implement Notifications,Testing,Flask,Rohan,intern200@example.com,Priya Mehta,High,Easy,16,19-01-2026,21-01-2026,25-01-2026,,In Progress,44,80,4.45,0,Excellent work
+T201,Profile Page UI,Documentation,AWS,Aarav,intern201@example.com,Rahul Shah,Low,Easy,39,20-01-2026,22-01-2026,26-01-2026,,In Progress,71,64,2.55,0,On track
+T202,Implement Notifications,Testing,Kubernetes,Aditya,intern202@example.com,Ankit Patel,Medium,Medium,13,13-03-2026,13-03-2026,20-03-2026,,Blocked,17,86,3.54,0,On track
+T203,Dashboard Development,Deployment,Kubernetes,Ishaan,intern203@example.com,Ankit Patel,Low,Easy,9,24-02-2026,26-02-2026,01-03-2026,,In Progress,89,88,2.67,0,Excellent work
+T204,User Authentication,Deployment,PostgreSQL,Rohan,intern204@example.com,Rahul Shah,Medium,Easy,34,24-03-2026,25-03-2026,03-04-2026,,Not Started,0,52,4.57,0,Well documented
+T205,Login Page UI,Development,Angular,Harsh,intern205@example.com,Priya Mehta,High,Hard,31,11-01-2026,13-01-2026,17-01-2026,,In Progress,67,89,4.98,0,Code quality good
+T206,Data Cleaning Script,Research,Kubernetes,Krishna,intern206@example.com,Priya Mehta,Critical,Medium,12,25-01-2026,25-01-2026,02-02-2026,27-01-2026,Completed,100,86,2.64,0,Good progress
+T207,Login Page UI,Development,PostgreSQL,Aryan,intern207@example.com,Sneha Desai,Critical,Hard,24,29-04-2026,01-05-2026,03-05-2026,,In Progress,40,78,4.76,0,Requires refactoring
+T208,API Integration,Research,AWS,Aryan,intern208@example.com,Priya Mehta,High,Medium,23,22-01-2026,22-01-2026,29-01-2026,,Not Started,0,100,2.87,0,Needs improvement
+T209,Dashboard Development,Research,Python,Aarav,intern209@example.com,Priya Mehta,Critical,Easy,6,02-02-2026,03-02-2026,09-02-2026,,In Progress,70,58,3.38,0,Needs improvement
+T210,API Integration,Testing,Django,Vivaan,intern210@example.com,Priya Mehta,High,Hard,7,14-03-2026,14-03-2026,16-03-2026,,Blocked,57,65,4.83,0,Good progress
+T211,Search Feature,Documentation,PostgreSQL,Yash,intern211@example.com,Rahul Shah,Medium,Medium,4,13-01-2026,13-01-2026,19-01-2026,,Blocked,28,88,4.15,0,Requires refactoring
+T212,Optimize Queries,Documentation,AWS,Neel,intern212@example.com,Karan Trivedi,Low,Easy,37,01-05-2026,02-05-2026,10-05-2026,,In Progress,45,65,2.86,0,Delayed due to dependency
+T213,Data Cleaning Script,Research,React,Neel,intern213@example.com,Rahul Shah,High,Hard,12,21-01-2026,23-01-2026,02-02-2026,30-01-2026,Completed,100,76,3.26,0,Needs improvement
+T214,Login Page UI,Research,MongoDB,Neel,intern214@example.com,Ankit Patel,Medium,Hard,16,11-01-2026,13-01-2026,18-01-2026,,Not Started,0,54,4.98,0,Well documented
+T215,Bug Fix Payment Module,Research,.NET,Krishna,intern215@example.com,Rahul Shah,Medium,Easy,35,27-02-2026,27-02-2026,07-03-2026,,Not Started,0,86,2.98,0,Code quality good
+T216,Database Schema Design,Documentation,Node.js,Ishaan,intern216@example.com,Sneha Desai,Critical,Medium,27,15-02-2026,16-02-2026,25-02-2026,,Not Started,0,59,3.22,0,Code quality good
+T217,Data Cleaning Script,Testing,Kubernetes,Neel,intern217@example.com,Karan Trivedi,Critical,Hard,5,02-03-2026,04-03-2026,06-03-2026,,In Progress,81,52,4.74,0,Excellent work
+T218,Cache Optimization,Deployment,Node.js,Aryan,intern218@example.com,Rahul Shah,High,Medium,31,30-01-2026,30-01-2026,04-02-2026,,In Progress,57,50,2.52,0,Excellent work
+T219,Create Landing Page,Documentation,Flask,Yash,intern219@example.com,Karan Trivedi,Medium,Hard,7,29-01-2026,31-01-2026,07-02-2026,,Blocked,40,61,3.6,0,Needs improvement
+T220,Write Unit Tests,Deployment,AWS,Rohan,intern220@example.com,Karan Trivedi,Low,Medium,21,23-01-2026,23-01-2026,25-01-2026,,Blocked,44,61,4.77,0,Well documented
+T221,Create Landing Page,Development,Kubernetes,Aarav,intern221@example.com,Rahul Shah,Low,Medium,7,28-01-2026,29-01-2026,03-02-2026,,Not Started,0,92,4.54,0,On track
+T222,Bug Fix Payment Module,Research,Angular,Vivaan,intern222@example.com,Ankit Patel,High,Easy,23,27-01-2026,27-01-2026,03-02-2026,,Blocked,12,66,2.78,0,On track
+T223,Analytics Chart Module,Deployment,PostgreSQL,Aryan,intern223@example.com,Priya Mehta,High,Easy,17,23-04-2026,24-04-2026,03-05-2026,02-05-2026,Completed,100,99,3.4,0,Excellent work
+T224,Write Unit Tests,Testing,Python,Vivaan,intern224@example.com,Rahul Shah,Low,Hard,16,01-05-2026,02-05-2026,10-05-2026,,In Progress,51,89,4.46,0,Requires refactoring
+T225,Optimize Queries,Deployment,Angular,Aarav,intern225@example.com,Ankit Patel,High,Medium,21,30-03-2026,01-04-2026,04-04-2026,08-04-2026,Completed,100,53,4.76,4,Code quality good
+T226,Bug Fix Payment Module,Testing,Python,Vivaan,intern226@example.com,Sneha Desai,Low,Hard,23,07-02-2026,07-02-2026,14-02-2026,13-02-2026,Completed,100,53,4.98,0,Needs improvement
+T227,Profile Page UI,Deployment,Django,Kunal,intern227@example.com,Rahul Shah,High,Medium,6,17-04-2026,18-04-2026,23-04-2026,,Not Started,0,61,3.95,0,On track
+T228,API Integration,Deployment,Kubernetes,Aditya,intern228@example.com,Priya Mehta,High,Medium,30,08-02-2026,10-02-2026,13-02-2026,,Blocked,23,89,3.59,0,Well documented
+T229,Cache Optimization,Development,.NET,Harsh,intern229@example.com,Sneha Desai,High,Medium,31,04-03-2026,05-03-2026,11-03-2026,,Not Started,0,76,4.41,0,On track
+T230,Implement Notifications,Development,Docker,Rohan,intern230@example.com,Rahul Shah,High,Hard,16,18-03-2026,19-03-2026,29-03-2026,,Not Started,0,100,4.52,0,Well documented
+T231,Cache Optimization,Documentation,Docker,Vivaan,intern231@example.com,Sneha Desai,Low,Easy,32,21-03-2026,22-03-2026,30-03-2026,23-03-2026,Completed,100,100,3.94,0,Requires refactoring
+T232,Login Page UI,Documentation,.NET,Aarav,intern232@example.com,Karan Trivedi,Critical,Medium,33,09-04-2026,10-04-2026,16-04-2026,,Not Started,0,93,3.31,0,Well documented
+T233,Dashboard Development,Testing,AWS,Rohan,intern233@example.com,Sneha Desai,Medium,Easy,23,26-03-2026,28-03-2026,30-03-2026,,Not Started,0,69,3.91,0,On track
+T234,Data Cleaning Script,Deployment,Node.js,Kunal,intern234@example.com,Sneha Desai,High,Easy,29,21-04-2026,21-04-2026,01-05-2026,,In Progress,52,87,3.37,0,Good progress
+T235,Implement Notifications,Development,Docker,Aditya,intern235@example.com,Sneha Desai,Critical,Medium,22,17-03-2026,19-03-2026,23-03-2026,,Not Started,0,56,3.2,0,Good progress
+T236,Create Landing Page,Research,React,Kunal,intern236@example.com,Sneha Desai,High,Easy,36,09-01-2026,11-01-2026,18-01-2026,,In Progress,48,83,3.63,0,Well documented
+T237,API Integration,Research,Node.js,Rohan,intern237@example.com,Sneha Desai,Medium,Easy,40,18-03-2026,19-03-2026,22-03-2026,,Not Started,0,99,4.68,0,Excellent work
+T238,Bug Fix Payment Module,Deployment,Python,Krishna,intern238@example.com,Karan Trivedi,Critical,Easy,32,11-01-2026,13-01-2026,21-01-2026,,Not Started,0,58,4.62,0,Good progress
+T239,Search Feature,Development,PostgreSQL,Neel,intern239@example.com,Sneha Desai,Medium,Hard,16,06-03-2026,08-03-2026,16-03-2026,,Not Started,0,90,3.51,0,Well documented
+T240,Optimize Queries,Deployment,Kubernetes,Krishna,intern240@example.com,Priya Mehta,High,Hard,23,02-03-2026,02-03-2026,12-03-2026,08-03-2026,Completed,100,93,2.57,0,Delayed due to dependency
+T241,User Authentication,Testing,Docker,Neel,intern241@example.com,Ankit Patel,High,Easy,19,28-02-2026,28-02-2026,05-03-2026,,In Progress,73,74,4.82,0,Excellent work
+T242,Search Feature,Research,AWS,Aarav,intern242@example.com,Karan Trivedi,Low,Easy,40,19-01-2026,19-01-2026,25-01-2026,,Blocked,14,54,4.32,0,Requires refactoring
+T243,API Integration,Research,AWS,Ishaan,intern243@example.com,Karan Trivedi,High,Hard,37,10-01-2026,11-01-2026,13-01-2026,,Blocked,25,68,2.81,0,Delayed due to dependency
+T244,Login Page UI,Research,MongoDB,Aditya,intern244@example.com,Karan Trivedi,Medium,Hard,19,28-03-2026,30-03-2026,09-04-2026,,Blocked,12,84,2.68,0,On track
+T245,Analytics Chart Module,Documentation,Docker,Krishna,intern245@example.com,Ankit Patel,Medium,Hard,19,10-02-2026,11-02-2026,18-02-2026,19-02-2026,Completed,100,64,2.81,1,Code quality good
+T246,API Integration,Deployment,MongoDB,Aarav,intern246@example.com,Rahul Shah,Low,Medium,31,06-03-2026,06-03-2026,16-03-2026,,In Progress,70,62,4.82,0,Needs improvement
+T247,Database Schema Design,Research,MongoDB,Kunal,intern247@example.com,Karan Trivedi,Critical,Hard,29,06-01-2026,08-01-2026,13-01-2026,18-01-2026,Completed,100,55,4.21,5,Needs improvement
+T248,Bug Fix Payment Module,Development,Docker,Neel,intern248@example.com,Ankit Patel,High,Medium,34,14-02-2026,15-02-2026,25-02-2026,,Blocked,49,70,3.1,0,Requires refactoring
+T249,Profile Page UI,Testing,Angular,Ishaan,intern249@example.com,Priya Mehta,High,Hard,15,02-04-2026,02-04-2026,09-04-2026,,Blocked,33,59,3.76,0,Well documented
+T250,Search Feature,Deployment,Angular,Rohan,intern250@example.com,Ankit Patel,Critical,Medium,26,11-02-2026,13-02-2026,21-02-2026,22-02-2026,Completed,100,98,2.98,1,Delayed due to dependency
+T251,Optimize Queries,Development,MongoDB,Ishaan,intern251@example.com,Karan Trivedi,High,Easy,15,28-02-2026,02-03-2026,07-03-2026,,In Progress,63,56,4.15,0,Well documented
+T252,Deploy CI/CD Pipeline,Documentation,Django,Vivaan,intern252@example.com,Sneha Desai,Low,Easy,24,21-02-2026,21-02-2026,28-02-2026,27-02-2026,Completed,100,68,3.17,0,Code quality good
+T253,Write Unit Tests,Deployment,Node.js,Aryan,intern253@example.com,Karan Trivedi,Low,Easy,4,10-04-2026,11-04-2026,14-04-2026,,In Progress,50,58,3.36,0,Delayed due to dependency
+T254,Data Cleaning Script,Testing,AWS,Kunal,intern254@example.com,Sneha Desai,Low,Easy,8,31-01-2026,01-02-2026,11-02-2026,,In Progress,76,55,4.07,0,Excellent work
+T255,Optimize Queries,Deployment,Python,Kunal,intern255@example.com,Ankit Patel,High,Hard,16,08-02-2026,09-02-2026,13-02-2026,11-02-2026,Completed,100,88,2.86,0,Excellent work
+T256,Create Landing Page,Documentation,React,Krishna,intern256@example.com,Priya Mehta,Medium,Medium,34,13-04-2026,14-04-2026,22-04-2026,18-04-2026,Completed,100,61,4.12,0,On track
+T257,Dashboard Development,Research,Angular,Aryan,intern257@example.com,Ankit Patel,Critical,Easy,29,01-04-2026,03-04-2026,09-04-2026,07-04-2026,Completed,100,58,3.14,0,Requires refactoring
+T258,Implement Notifications,Testing,Kubernetes,Krishna,intern258@example.com,Karan Trivedi,Low,Easy,28,04-03-2026,06-03-2026,11-03-2026,,Blocked,41,59,4.97,0,Good progress
+T259,Search Feature,Documentation,Docker,Yash,intern259@example.com,Ankit Patel,Critical,Easy,13,10-01-2026,11-01-2026,20-01-2026,,In Progress,75,58,4.05,0,Needs improvement
+T260,API Integration,Research,.NET,Aryan,intern260@example.com,Ankit Patel,Low,Easy,19,03-02-2026,04-02-2026,11-02-2026,,In Progress,79,88,3.09,0,Excellent work
+T261,Deploy CI/CD Pipeline,Research,Angular,Dev,intern261@example.com,Rahul Shah,Low,Medium,37,14-01-2026,15-01-2026,21-01-2026,,In Progress,64,79,3.93,0,Requires refactoring
+T262,Cache Optimization,Deployment,Flask,Krishna,intern262@example.com,Rahul Shah,High,Medium,27,27-03-2026,27-03-2026,03-04-2026,,Blocked,37,89,4.65,0,Code quality good
+T263,Analytics Chart Module,Testing,Node.js,Krishna,intern263@example.com,Rahul Shah,Critical,Easy,36,15-01-2026,15-01-2026,25-01-2026,23-01-2026,Completed,100,100,3.41,0,Needs improvement
+T264,Optimize Queries,Deployment,Python,Ishaan,intern264@example.com,Ankit Patel,Low,Easy,5,29-04-2026,29-04-2026,08-05-2026,,In Progress,73,57,3.06,0,Good progress
+T265,Data Cleaning Script,Research,PostgreSQL,Neel,intern265@example.com,Karan Trivedi,Critical,Easy,17,03-03-2026,05-03-2026,14-03-2026,,Not Started,0,55,2.95,0,Requires refactoring
+T266,Write Unit Tests,Deployment,AWS,Yash,intern266@example.com,Karan Trivedi,Low,Easy,25,05-02-2026,06-02-2026,16-02-2026,,Not Started,0,55,2.59,0,Well documented
+T267,Search Feature,Deployment,Node.js,Rohan,intern267@example.com,Priya Mehta,Medium,Medium,32,22-04-2026,24-04-2026,27-04-2026,,Blocked,53,61,4.17,0,Requires refactoring
+T268,Login Page UI,Deployment,Kubernetes,Ishaan,intern268@example.com,Priya Mehta,High,Medium,35,06-04-2026,07-04-2026,15-04-2026,,Blocked,50,77,3.72,0,On track
+T269,User Authentication,Documentation,AWS,Rohan,intern269@example.com,Priya Mehta,Low,Hard,25,15-01-2026,17-01-2026,27-01-2026,,In Progress,46,70,3.02,0,Delayed due to dependency
+T270,Deploy CI/CD Pipeline,Development,PostgreSQL,Dev,intern270@example.com,Priya Mehta,Low,Easy,8,10-01-2026,12-01-2026,14-01-2026,,Not Started,0,100,4.48,0,Requires refactoring
+T271,Implement Notifications,Documentation,.NET,Dev,intern271@example.com,Ankit Patel,Critical,Easy,7,11-04-2026,11-04-2026,13-04-2026,,Not Started,0,54,4.36,0,On track
+T272,Cache Optimization,Research,Django,Ishaan,intern272@example.com,Sneha Desai,Medium,Easy,13,17-02-2026,18-02-2026,25-02-2026,,Blocked,17,75,4.23,0,Needs improvement
+T273,Bug Fix Payment Module,Testing,Python,Harsh,intern273@example.com,Karan Trivedi,Critical,Easy,27,03-01-2026,04-01-2026,10-01-2026,,Blocked,13,75,3.72,0,Well documented
+T274,Optimize Queries,Documentation,Kubernetes,Yash,intern274@example.com,Ankit Patel,Critical,Hard,22,06-03-2026,06-03-2026,13-03-2026,07-03-2026,Completed,100,88,3.29,0,Well documented
+T275,Database Schema Design,Deployment,MongoDB,Vivaan,intern275@example.com,Sneha Desai,Critical,Medium,32,19-02-2026,20-02-2026,28-02-2026,,In Progress,48,92,3.68,0,Excellent work
+T276,Optimize Queries,Development,Django,Harsh,intern276@example.com,Rahul Shah,Low,Hard,34,25-02-2026,25-02-2026,03-03-2026,,In Progress,67,59,3.79,0,Code quality good
+T277,Create Landing Page,Deployment,Angular,Vivaan,intern277@example.com,Priya Mehta,High,Hard,25,31-01-2026,01-02-2026,09-02-2026,03-02-2026,Completed,100,71,3.13,0,Code quality good
+T278,Bug Fix Payment Module,Testing,Python,Neel,intern278@example.com,Rahul Shah,Low,Easy,22,28-01-2026,29-01-2026,02-02-2026,,Not Started,0,78,3.72,0,Excellent work
+T279,Implement Notifications,Testing,Python,Dev,intern279@example.com,Rahul Shah,Medium,Hard,12,09-03-2026,09-03-2026,19-03-2026,,Blocked,33,96,3.3,0,Well documented
+T280,API Integration,Development,Flask,Harsh,intern280@example.com,Sneha Desai,Critical,Hard,12,08-03-2026,10-03-2026,13-03-2026,,In Progress,45,52,3.38,0,Excellent work
+T281,Optimize Queries,Documentation,Node.js,Yash,intern281@example.com,Ankit Patel,Low,Hard,39,08-02-2026,10-02-2026,12-02-2026,,Not Started,0,62,4.75,0,Code quality good
+T282,Login Page UI,Testing,AWS,Krishna,intern282@example.com,Priya Mehta,Low,Medium,4,01-01-2026,01-01-2026,08-01-2026,,Blocked,26,78,2.93,0,Code quality good
+T283,Database Schema Design,Research,AWS,Ishaan,intern283@example.com,Rahul Shah,High,Medium,10,15-03-2026,15-03-2026,19-03-2026,,Not Started,0,58,2.6,0,Excellent work
+T284,Profile Page UI,Deployment,Django,Aditya,intern284@example.com,Karan Trivedi,Low,Medium,10,27-04-2026,29-04-2026,04-05-2026,03-05-2026,Completed,100,99,4.63,0,Needs improvement
+T285,Profile Page UI,Research,Django,Dev,intern285@example.com,Karan Trivedi,Critical,Easy,34,27-02-2026,28-02-2026,07-03-2026,,Not Started,0,82,3.78,0,Needs improvement
+T286,Login Page UI,Research,Node.js,Rohan,intern286@example.com,Karan Trivedi,High,Easy,21,08-04-2026,09-04-2026,13-04-2026,,Blocked,17,90,4.12,0,Requires refactoring
+T287,Analytics Chart Module,Documentation,Docker,Dev,intern287@example.com,Ankit Patel,Low,Easy,19,09-02-2026,09-02-2026,11-02-2026,,In Progress,72,77,2.6,0,Well documented
+T288,Implement Notifications,Deployment,Angular,Aarav,intern288@example.com,Karan Trivedi,Low,Easy,14,01-02-2026,01-02-2026,03-02-2026,,In Progress,86,81,3.47,0,Well documented
+T289,Database Schema Design,Deployment,Angular,Kunal,intern289@example.com,Priya Mehta,Medium,Easy,21,03-02-2026,05-02-2026,14-02-2026,,Blocked,35,94,2.61,0,Delayed due to dependency
+T290,Create Landing Page,Deployment,Angular,Aditya,intern290@example.com,Karan Trivedi,Low,Hard,9,19-01-2026,21-01-2026,26-01-2026,24-01-2026,Completed,100,88,4.47,0,Delayed due to dependency
+T291,Optimize Queries,Research,PostgreSQL,Yash,intern291@example.com,Priya Mehta,High,Hard,13,14-04-2026,16-04-2026,18-04-2026,18-04-2026,Completed,100,77,3.91,0,Code quality good
+T292,Database Schema Design,Deployment,React,Ishaan,intern292@example.com,Karan Trivedi,Medium,Hard,11,22-04-2026,23-04-2026,27-04-2026,,Not Started,0,78,4.67,0,Code quality good
+T293,Cache Optimization,Development,MongoDB,Krishna,intern293@example.com,Ankit Patel,Low,Medium,19,26-03-2026,26-03-2026,01-04-2026,05-04-2026,Completed,100,63,3.75,4,Good progress
+T294,Create Landing Page,Testing,Node.js,Kunal,intern294@example.com,Sneha Desai,Critical,Hard,19,15-04-2026,15-04-2026,19-04-2026,24-04-2026,Completed,100,74,4.64,5,Code quality good
+T295,User Authentication,Testing,MongoDB,Aarav,intern295@example.com,Sneha Desai,High,Hard,22,06-04-2026,07-04-2026,13-04-2026,10-04-2026,Completed,100,77,3.8,0,Delayed due to dependency
+T296,Data Cleaning Script,Documentation,Python,Yash,intern296@example.com,Priya Mehta,High,Medium,32,28-02-2026,28-02-2026,08-03-2026,,Blocked,14,84,5,0,Code quality good
+T297,Data Cleaning Script,Development,Python,Aarav,intern297@example.com,Ankit Patel,Medium,Hard,18,14-03-2026,15-03-2026,19-03-2026,,In Progress,59,76,4.1,0,Well documented
+T298,Optimize Queries,Documentation,.NET,Ishaan,intern298@example.com,Karan Trivedi,Critical,Medium,13,13-04-2026,15-04-2026,18-04-2026,25-04-2026,Completed,100,95,3.81,7,Well documented
+T299,Bug Fix Payment Module,Documentation,.NET,Krishna,intern299@example.com,Sneha Desai,Critical,Easy,5,09-03-2026,11-03-2026,17-03-2026,,Not Started,0,54,3.03,0,Requires refactoring
+T300,Optimize Queries,Development,Python,Neel,intern300@example.com,Sneha Desai,High,Medium,5,28-03-2026,29-03-2026,04-04-2026,,In Progress,57,60,4.02,0,On track
