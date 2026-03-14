@@ -29,17 +29,17 @@ export default function ManagerDashboardLayout({ user, onLogout }) {
 
   const renderModule = () => {
     switch (active) {
-      case 'overview': return <OverviewModule />
-      case 'interns': return <InternModule />
+      case 'overview': return <OverviewModule user={user} />
+      case 'interns': return <InternModule user={user} />
       case 'tasks': return <TaskModule user={user} />
-      case 'comparison': return <ComparisonModule />
-      case 'analytics': return <AnalyticsModule />
-      case 'alerts': return <AlertsModule />
-      case 'predictions': return <PredictionModule />
-      case 'chatbot': return <ChatbotModule />
-      case 'summary': return <SummaryModule />
-      case 'export': return <ExportModule />
-      default: return <OverviewModule />
+      case 'comparison': return <ComparisonModule user={user} />
+      case 'analytics': return <AnalyticsModule user={user} />
+      case 'alerts': return <AlertsModule user={user} />
+      case 'predictions': return <PredictionModule user={user} />
+      case 'chatbot': return <ChatbotModule user={user} />
+      case 'summary': return <SummaryModule user={user} />
+      case 'export': return <ExportModule user={user} />
+      default: return <OverviewModule user={user} />
     }
   }
 
@@ -79,9 +79,9 @@ export default function ManagerDashboardLayout({ user, onLogout }) {
   )
 }
 
-function OverviewModule() {
+function OverviewModule({ user }) {
   const [data, setData] = useState(null)
-  useEffect(() => { fetch(`${API}/manager/overview`).then(r => r.json()).then(setData).catch(() => { }) }, [])
+  useEffect(() => { fetch(`${API}/manager/overview?manager_id=${user?.local_id}`).then(r => r.json()).then(setData).catch(() => { }) }, [user])
   if (!data) return <p>Loading…</p>
 
   const taskPie = [
@@ -143,9 +143,9 @@ function OverviewModule() {
   )
 }
 
-function InternModule() {
+function InternModule({ user }) {
   const [interns, setInterns] = useState([])
-  useEffect(() => { fetch(`${API}/manager/interns`).then(r => r.json()).then(setInterns).catch(() => { }) }, [])
+  useEffect(() => { fetch(`${API}/manager/interns?manager_id=${user?.local_id}`).then(r => r.json()).then(setInterns).catch(() => { }) }, [user])
 
   return (
     <>
@@ -177,14 +177,16 @@ function TaskModule({ user }) {
   const [form, setForm] = useState({ title: '', assignee: '', priority: 'Medium', deadline: '' })
 
   useEffect(() => { 
-    fetch(`${API}/manager/tasks`).then(r => r.json()).then(setTasks).catch(() => { }) 
-    fetch(`${API}/manager/interns`).then(r => r.json()).then(data => {
-      setMyInterns(data.filter(i => i.manager_id === user?.local_id || i.assigned_manager === user?.name))
-    }).catch(() => { })
+    if(user?.local_id) {
+        fetch(`${API}/manager/tasks?manager_id=${user.local_id}`).then(r => r.json()).then(setTasks).catch(() => { }) 
+        fetch(`${API}/manager/interns?manager_id=${user.local_id}`).then(r => r.json()).then(data => {
+            setMyInterns(data)
+        }).catch(() => { })
+    }
   }, [user])
 
   const createTask = async () => {
-    const res = await fetch(`${API}/manager/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+    const res = await fetch(`${API}/manager/tasks?manager_id=${user?.local_id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
     const newTask = await res.json()
     setTasks([...tasks, newTask])
     setShowModal(false)
@@ -246,11 +248,11 @@ function TaskModule({ user }) {
   )
 }
 
-function ComparisonModule() {
+function ComparisonModule({ user }) {
   const [data, setData] = useState([])
   const [selected, setSelected] = useState([])
 
-  useEffect(() => { fetch(`${API}/manager/comparison`).then(r => r.json()).then(d => { setData(d); setSelected(d.slice(0, 2).map(i => i.id)) }).catch(() => { }) }, [])
+  useEffect(() => { fetch(`${API}/manager/comparison?manager_id=${user?.local_id}`).then(r => r.json()).then(d => { setData(d); setSelected(d.slice(0, 2).map(i => i.id)) }).catch(() => { }) }, [user])
 
   const toggle = (id) => {
     if (selected.includes(id)) setSelected(selected.filter(x => x !== id))
@@ -317,9 +319,9 @@ function ComparisonModule() {
   )
 }
 
-function AnalyticsModule() {
+function AnalyticsModule({ user }) {
   const [data, setData] = useState(null)
-  useEffect(() => { fetch(`${API}/manager/analytics`).then(r => r.json()).then(setData).catch(() => { }) }, [])
+  useEffect(() => { fetch(`${API}/manager/analytics?manager_id=${user?.local_id}`).then(r => r.json()).then(setData).catch(() => { }) }, [user])
   if (!data) return <p>Loading…</p>
 
   return (
@@ -369,9 +371,9 @@ function AnalyticsModule() {
   )
 }
 
-function AlertsModule() {
+function AlertsModule({ user }) {
   const [alerts, setAlerts] = useState([])
-  useEffect(() => { fetch(`${API}/manager/alerts`).then(r => r.json()).then(setAlerts).catch(() => { }) }, [])
+  useEffect(() => { fetch(`${API}/manager/alerts?manager_id=${user?.local_id}`).then(r => r.json()).then(setAlerts).catch(() => { }) }, [user])
 
   return (
     <>
@@ -397,9 +399,9 @@ function AlertsModule() {
   )
 }
 
-function PredictionModule() {
+function PredictionModule({ user }) {
   const [preds, setPreds] = useState([])
-  useEffect(() => { fetch(`${API}/manager/predictions`).then(r => r.json()).then(setPreds).catch(() => { }) }, [])
+  useEffect(() => { fetch(`${API}/manager/predictions?manager_id=${user?.local_id}`).then(r => r.json()).then(setPreds).catch(() => { }) }, [user])
 
   const chartData = preds.map(p => ({ name: p.name.split(' ')[0], current: p.currentScore, predicted: p.predictedScore }))
 
@@ -441,7 +443,7 @@ function PredictionModule() {
   )
 }
 
-function ChatbotModule() {
+function ChatbotModule({ user }) {
   const [messages, setMessages] = useState([{ text: "Hello! I'm the KenexAI assistant. Ask me about intern performance, tasks, or alerts.", sender: 'bot' }])
   const [input, setInput] = useState('')
   const bottomRef = useRef(null)
@@ -454,7 +456,7 @@ function ChatbotModule() {
     setMessages(prev => [...prev, { text: userMsg, sender: 'user' }])
     setInput('')
     try {
-      const res = await fetch(`${API}/manager/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: userMsg }) })
+      const res = await fetch(`${API}/manager/chat?manager_id=${user?.local_id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: userMsg }) })
       const data = await res.json()
       setMessages(prev => [...prev, { text: data.reply, sender: 'bot' }])
     } catch {
@@ -479,9 +481,9 @@ function ChatbotModule() {
   )
 }
 
-function SummaryModule() {
+function SummaryModule({ user }) {
   const [data, setData] = useState(null)
-  useEffect(() => { fetch(`${API}/manager/daily-summary`).then(r => r.json()).then(setData).catch(() => { }) }, [])
+  useEffect(() => { fetch(`${API}/manager/daily-summary?manager_id=${user?.local_id}`).then(r => r.json()).then(setData).catch(() => { }) }, [user])
   if (!data) return <p>Loading…</p>
 
   return (
@@ -514,9 +516,9 @@ function SummaryModule() {
   )
 }
 
-function ExportModule() {
+function ExportModule({ user }) {
   const downloadJSON = async (type) => {
-    const res = await fetch(`${API}/manager/export/${type}`)
+    const res = await fetch(`${API}/manager/export/${type}?manager_id=${user?.local_id}`)
     const data = await res.json()
     const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
