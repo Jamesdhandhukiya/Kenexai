@@ -2,8 +2,36 @@ from flask import Blueprint, request, jsonify
 from data import INTERNS, TASKS, LOGS, sb_admin
 from datetime import datetime
 import random
+import json
+import os
 
 intern_bp = Blueprint('intern', __name__)
+
+COMPLETIONS_PATH = os.path.join(os.path.dirname(__file__), 'data', 'course_completions.json')
+
+def _load_completions():
+    try:
+        if os.path.exists(COMPLETIONS_PATH):
+            with open(COMPLETIONS_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+def _save_completions(data):
+    try:
+        os.makedirs(os.path.dirname(COMPLETIONS_PATH), exist_ok=True)
+        with open(COMPLETIONS_PATH, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        print(f"[KenexAI] Failed to save course completions: {e}")
+
+def _get_email_from_id(profile_id):
+    profile_res = sb_admin.table("profiles").select("email, manager_id").eq("id", profile_id).execute()
+    if not profile_res.data:
+        return None, None
+    row = profile_res.data[0]
+    return (row.get("email"), row.get("manager_id"))
 
 @intern_bp.route('/intern/tasks/<id>', methods=['GET'])
 def intern_tasks(id):
@@ -117,20 +145,169 @@ def intern_productivity(id):
         "weekly": [{"day": d, "score": random.randint(80, 95)} for d in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]]
     })
 
+@intern_bp.route('/intern/course-completions', methods=['GET'])
+def get_course_completions():
+    email = (request.args.get('email') or '').strip().lower()
+    if not email:
+        return jsonify({"completed": [], "testResults": []})
+    data = _load_completions()
+    user = data.get(email, {"completed": [], "tests": []})
+    return jsonify({
+        "completed": user.get("completed", []),
+        "testResults": user.get("tests", [])
+    })
+
+@intern_bp.route('/intern/course-completions', methods=['POST'])
+def post_course_completion():
+    body = request.get_json(force=True) or {}
+    email = (body.get('email') or '').strip().lower()
+    course = (body.get('course') or '').strip()
+    if not email or not course:
+        return jsonify({"error": "email and course required"}), 400
+    data = _load_completions()
+    if email not in data:
+        data[email] = {"completed": [], "tests": []}
+    if course not in data[email]["completed"]:
+        data[email]["completed"].append(course)
+    _save_completions(data)
+    return jsonify({"completed": data[email]["completed"], "testResults": data[email].get("tests", [])})
+
+@intern_bp.route('/intern/test-result', methods=['POST'])
+def post_test_result():
+    body = request.get_json(force=True) or {}
+    email = (body.get('email') or '').strip().lower()
+    course = (body.get('course') or '').strip()
+    score = int(body.get('score', 0))
+    hours_spent = int(body.get('hours_spent', 0)) or max(1, min(50, score // 5))
+    if not email or not course:
+        return jsonify({"error": "email and course required"}), 400
+    data = _load_completions()
+    if email not in data:
+        data[email] = {"completed": [], "tests": []}
+    data[email]["tests"].append({
+        "course": course,
+        "score": score,
+        "hours_spent": hours_spent,
+        "completed_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    })
+    if course not in data[email]["completed"]:
+        data[email]["completed"].append(course)
+    _save_completions(data)
+    return jsonify({"ok": True})
+
 @intern_bp.route('/intern/growth/<id>', methods=['GET'])
 def intern_growth(id):
+    email, manager_id = _get_email_from_id(id)
+    if not email:
+        return jsonify({"error": "Profile not found"}), 404
+    data = _load_completions()
+    user_data = data.get(email, {"completed": [], "tests": []})
+    tests = user_data.get("tests", [])
+    completed = user_data.get("completed", [])
+
+    # One certification per course: keep only the first completion (first time they passed/completed)
+    seen_courses = set()
+    certifications = []
+    total_hours = 0
+    for t in tests:
+        course_name = (t.get("course") or "").strip()
+        if not course_name or course_name in seen_courses:
+            continue
+        seen_courses.add(course_name)
+        certifications.append({
+            "course": course_name,
+            "hours_spent": t.get("hours_spent", 0),
+            "skill_level": _score_to_skill_level(t.get("score", 0)),
+            "score": t.get("score", 0),
+            "completed_at": t.get("completed_at", "")
+        })
+        total_hours += t.get("hours_spent", 0)
+
+    current_skills = {}
+    for t in tests:
+        name = t.get("course", "").split()[-1] if t.get("course") else "Skill"
+        if "SQL" in (t.get("course") or ""):
+            current_skills["SQL"] = t.get("score", 0)
+        elif "Python" in (t.get("course") or ""):
+            current_skills["Python"] = t.get("score", 0)
+        elif "ML" in (t.get("course") or "") or "Machine" in (t.get("course") or ""):
+            current_skills["Machine Learning"] = t.get("score", 0)
+        else:
+            current_skills[name or "Other"] = t.get("score", 0)
+    if not current_skills:
+        current_skills = {"Python": 0, "SQL": 0, "Machine Learning": 0}
+
+    # Growth chart: one point per course (first attempt only) so no duplicate course entries
+    growth_chart = []
+    chart_seen = set()
+    for t in tests:
+        course_name = (t.get("course") or "").strip()
+        if course_name and course_name not in chart_seen:
+            chart_seen.add(course_name)
+            growth_chart.append({
+                "week": f"W{len(growth_chart) + 1}",
+                "Score": t.get("score", 0),
+                "course": course_name
+            })
+        if len(growth_chart) >= 10:
+            break
+    if not growth_chart:
+        growth_chart = [{"week": f"W{i}", "Score": 60 + i * 5} for i in range(1, 6)]
+
+    same_mentor_emails = []
+    if manager_id:
+        same_mentor = sb_admin.table("profiles").select("email").eq("manager_id", manager_id).eq("role", "intern").execute()
+        same_mentor_emails = [r["email"].lower().strip() for r in (same_mentor.data or [])]
+    all_scores = []
+    for em in same_mentor_emails:
+        ud = data.get(em, {"tests": []})
+        total = sum(t.get("score", 0) for t in ud.get("tests", []))
+        all_scores.append((em, total))
+    all_scores.sort(key=lambda x: -x[1])
+    rank = 0
+    cohort_size = len(same_mentor_emails)
+    # Only show rank when cohort has at least 2 and not everyone is tied (same level)
+    if cohort_size >= 2:
+        scores_only = [s for _, s in all_scores]
+        if len(set(scores_only)) > 1:  # at least two different totals
+            for i, (em, _) in enumerate(all_scores, 1):
+                if em == email.lower().strip():
+                    rank = i
+                    break
+
+    milestones = []
+    for c in certifications:
+        milestones.append({
+            "title": c["course"] + " (Cert)",
+            "status": "completed",
+            "date": (c.get("completed_at") or "")[:10],
+            "score": c.get("score"),
+            "skill_level": c.get("skill_level")
+        })
+    # Ranking is shown only once in the UI via mentorRank/mentorCohortSize; do not add to milestones
+
     return jsonify({
-        "totalHoursLearned": 124,
-        "coursesCompleted": 6,
-        "certificationsEarned": 2,
-        "currentSkills": {"Python": 85, "SQL": 92, "Machine Learning": 74, "Data Viz": 68},
-        "growthChart": [{"week": f"W{i}", "Python": 60+i*5, "SQL": 70+i*4, "ML": 40+i*6} for i in range(1, 6)],
-        "milestones": [
-            {"title": "Advanced SQL Cert", "status": "completed", "date": "2026-03-01"},
-            {"title": "PySpark Masterclass", "status": "in-progress", "progress": 65},
-            {"title": "MLOps Fundamentals", "status": "upcoming", "date": "2026-04-01"}
-        ]
+        "totalHoursLearned": total_hours,
+        "coursesCompleted": len(completed),
+        "certificationsEarned": len(certifications),
+        "certifications": certifications,
+        "currentSkills": current_skills,
+        "growthChart": growth_chart,
+        "milestones": milestones,
+        "mentorRank": rank,
+        "mentorCohortSize": cohort_size
     })
+
+def _score_to_skill_level(score):
+    if score >= 90:
+        return "Expert"
+    if score >= 75:
+        return "Advanced"
+    if score >= 60:
+        return "Intermediate"
+    if score >= 40:
+        return "Beginner"
+    return "Starter"
 
 @intern_bp.route('/intern/recommendations/<id>', methods=['GET'])
 def intern_recs(id):

@@ -2,6 +2,8 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import os
 from data import MANAGERS, INTERNS, sb_admin
+from routes.recommendations import recommendations_bp
+from routes.tests import tests_bp
 
 # Import Blueprints
 from auth import auth_bp
@@ -27,7 +29,8 @@ app.register_blueprint(auth_bp, url_prefix='/api')
 app.register_blueprint(hr_bp, url_prefix='/api')
 app.register_blueprint(manager_bp, url_prefix='/api')
 app.register_blueprint(intern_bp, url_prefix='/api')
-
+app.register_blueprint(recommendations_bp, url_prefix='/api')
+app.register_blueprint(tests_bp, url_prefix='/api')
 # ================================================
 # INITIAL SYNC
 # ================================================

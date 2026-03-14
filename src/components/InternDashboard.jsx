@@ -27,7 +27,7 @@ export default function InternDashboardLayout({ user, onLogout }) {
       case 'activity': return <InternActivityModule internId={internId} />
       case 'productivity': return <InternProductivityModule internId={internId} />
       case 'growth': return <InternGrowthModule internId={internId} />
-      case 'recommendations': return <InternRecsModule internId={internId} />
+      case 'recommendations': return <InternRecsModule user={user} />
       default: return <InternTasksModule internId={internId} />
     }
   }
@@ -298,62 +298,91 @@ function InternProductivityModule({ internId }) {
 
 function InternGrowthModule({ internId }) {
   const [data, setData] = useState(null)
-  useEffect(() => { fetch(`${API}/intern/growth/${internId}`).then(r => r.json()).then(setData).catch(() => { }) }, [internId])
+  useEffect(() => { fetch(`${API}/intern/growth/${internId}`).then(r => r.json()).then(setData).catch(() => setData(null)) }, [internId])
   if (!data) return <p>Loading…</p>
 
-  const skillKeys = Object.keys(data.currentSkills)
+  const skillKeys = Object.keys(data.currentSkills || {})
+  const certifications = data.certifications || []
+  const growthChart = data.growthChart || []
+  const chartKeys = growthChart.length && typeof growthChart[0] === 'object' ? Object.keys(growthChart[0]).filter(k => k !== 'week' && k !== 'course') : ['Score']
 
   return (
     <>
-      <div className="page-header"><h1>Growth Tracker</h1><p>Track your learning and skill progress over time</p></div>
+      <div className="page-header"><h1>Growth Tracker</h1><p>Track your learning, certifications, and skill progress</p></div>
       <div className="stats-grid cols-3">
-        <div className="stat-card"><div className="stat-label">Hours Learned</div><div className="stat-value">{data.totalHoursLearned}h</div></div>
-        <div className="stat-card"><div className="stat-label">Courses Done</div><div className="stat-value">{data.coursesCompleted}</div></div>
-        <div className="stat-card"><div className="stat-label">Certifications</div><div className="stat-value">{data.certificationsEarned} 🏅</div></div>
+        <div className="stat-card"><div className="stat-label">Total Hours (Certs)</div><div className="stat-value">{data.totalHoursLearned ?? 0}h</div></div>
+        <div className="stat-card"><div className="stat-label">Courses Done</div><div className="stat-value">{data.coursesCompleted ?? 0}</div></div>
+        <div className="stat-card"><div className="stat-label">Certifications</div><div className="stat-value">{data.certificationsEarned ?? 0} 🏅</div></div>
       </div>
+
+      {certifications.length > 0 && (
+        <div className="card" style={{ marginBottom: 24 }}>
+          <h3>📜 Certifications Completed</h3>
+          <p style={{ color: '#64748B', marginBottom: 16, fontSize: '0.9rem' }}>Skill level is derived from your exam score for each certification.</p>
+          <div style={{ display: 'grid', gap: 12 }}>
+            {certifications.map((c, i) => (
+              <div key={i} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16, padding: '12px 16px', background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0' }}>
+                <div style={{ fontWeight: 600 }}>{c.course}</div>
+                <span className="badge high" style={{ background: c.skill_level === 'Expert' ? '#059669' : c.skill_level === 'Advanced' ? '#7C3AED' : '#64748B' }}>{c.skill_level}</span>
+                <span style={{ fontSize: '0.9rem', color: '#64748B' }}>Score: {c.score}%</span>
+                <span style={{ fontSize: '0.9rem', color: '#64748B' }}>⏱ {c.hours_spent}h spent</span>
+                {c.completed_at && <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{c.completed_at.slice(0, 10)}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="content-grid cols-2">
         <div className="card">
-          <h3>Skill Growth Over Time</h3>
+          <h3>Skill Growth (Exam Scores)</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data.growthChart}>
+            <LineChart data={growthChart}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis dataKey="week" tick={{ fontSize: 12 }} />
               <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
               <Tooltip />
               <Legend />
-              {skillKeys.map((s, i) => (
+              {chartKeys.map((s, i) => (
                 <Line key={s} type="monotone" dataKey={s} stroke={COLORS[i % COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
               ))}
             </LineChart>
           </ResponsiveContainer>
         </div>
         <div className="card">
-          <h3>Current Skill Levels</h3>
-          {Object.entries(data.currentSkills).map(([skill, level]) => (
+          <h3>Current Skill Levels (from exams)</h3>
+          {skillKeys.length > 0 ? Object.entries(data.currentSkills).map(([skill, level]) => (
             <div className="skill-bar-group" key={skill}>
               <div className="skill-bar-label"><span>{skill}</span><span style={{ fontWeight: 700 }}>{level}%</span></div>
               <div className="skill-bar"><div className="fill" style={{ width: `${level}%` }}></div></div>
             </div>
-          ))}
+          )) : <p style={{ color: '#64748B' }}>Complete course tests to see skill levels here.</p>}
         </div>
       </div>
 
       <div className="card">
-        <h3>🎯 Learning Milestones</h3>
-        <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
-          {data.milestones.map((m, i) => (
+        <h3>🎯 Milestones &amp; Ranking</h3>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingBottom: 8 }}>
+          {data.mentorRank > 0 && (
+            <div style={{ minWidth: 200, padding: '16px 20px', border: '1px solid #d1fae5', borderRadius: 14, background: 'var(--color-success-bg)' }}>
+              <div style={{ fontSize: '1.3rem', marginBottom: 6 }}>🏆</div>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Rank #{data.mentorRank} among {data.mentorCohortSize} interns</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-success)' }}>Same mentor cohort</div>
+            </div>
+          )}
+          {(data.milestones || []).map((m, i) => (
             <div key={i} style={{ minWidth: 180, padding: '16px 20px', border: `1px solid ${m.status === 'completed' ? '#d1fae5' : m.status === 'in-progress' ? '#ddd6fe' : '#f1f5f9'}`, borderRadius: 14, background: m.status === 'completed' ? 'var(--color-success-bg)' : m.status === 'in-progress' ? 'var(--color-accent-light)' : '#fafbfc' }}>
               <div style={{ fontSize: '1.3rem', marginBottom: 6 }}>{m.status === 'completed' ? '✅' : m.status === 'in-progress' ? '🔄' : '🔜'}</div>
               <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 4 }}>{m.title}</div>
-              {m.status === 'completed' && <div style={{ fontSize: '0.78rem', color: 'var(--color-success)' }}>Completed · {m.date}</div>}
+              {m.status === 'completed' && m.date && <div style={{ fontSize: '0.78rem', color: 'var(--color-success)' }}>Completed · {m.date}</div>}
+              {m.skill_level && <div style={{ fontSize: '0.78rem', color: '#7C3AED' }}>Level: {m.skill_level}</div>}
               {m.status === 'in-progress' && (
                 <div>
-                  <div className="progress-bar" style={{ marginTop: 4 }}><div className="fill high" style={{ width: `${m.progress}%` }}></div></div>
-                  <div style={{ fontSize: '0.75rem', color: '#7C3AED', marginTop: 4 }}>{m.progress}% complete</div>
+                  <div className="progress-bar" style={{ marginTop: 4 }}><div className="fill high" style={{ width: `${m.progress || 0}%` }}></div></div>
+                  <div style={{ fontSize: '0.75rem', color: '#7C3AED', marginTop: 4 }}>{m.progress || 0}% complete</div>
                 </div>
               )}
-              {m.status === 'upcoming' && <div style={{ fontSize: '0.78rem', color: '#64748B' }}>Starts {m.date}</div>}
+              {m.status === 'upcoming' && m.date && <div style={{ fontSize: '0.78rem', color: '#64748B' }}>Starts {m.date}</div>}
             </div>
           ))}
         </div>
@@ -362,95 +391,302 @@ function InternGrowthModule({ internId }) {
   )
 }
 
-function InternRecsModule({ internId }) {
-  const [data, setData] = useState(null)
-  useEffect(() => { fetch(`${API}/intern/recommendations/${internId}`).then(r => r.json()).then(setData).catch(() => { }) }, [internId])
-  if (!data) return <p>Loading…</p>
+function InternRecsModule({ user }) {
+  const [recommendations, setRecommendations] = useState([])
+  const [completed, setCompleted] = useState(new Set())
+  const [testCourse, setTestCourse] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!user?.email) return
+    Promise.all([
+      fetch(`${API}/recommendations?email=${encodeURIComponent(user.email)}`).then(r => r.json()),
+      fetch(`${API}/intern/course-completions?email=${encodeURIComponent(user.email)}`).then(r => r.json())
+    ])
+      .then(([recData, compData]) => {
+        setRecommendations(recData.recommendations || [])
+        setCompleted(new Set(compData.completed || []))
+      })
+      .catch(err => {
+        console.error('Error fetching recommendations or completions', err)
+        setRecommendations([])
+      })
+      .finally(() => setLoading(false))
+  }, [user?.email])
+
+  const markCompleted = (course) => {
+    if (!user?.email) return
+    setCompleted(prev => new Set(prev).add(course))
+    fetch(`${API}/intern/course-completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user.email, course }),
+    }).catch(() => {})
+  }
+
+  const startTest = (course) => {
+    setTestCourse(course)
+  }
+
+  const closeTest = () => {
+    setTestCourse(null)
+  }
+
+  const onTestComplete = (result) => {
+    if (!user?.email || !result?.course) return
+    setCompleted(prev => new Set(prev).add(result.course))
+    fetch(`${API}/intern/test-result`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: user.email,
+        course: result.course,
+        score: result.score ?? 0,
+        hours_spent: result.hours_spent,
+      }),
+    }).catch(() => {})
+  }
+
+  if (loading) return <p>Loading recommendations...</p>
+
+  if (testCourse) {
+    return (
+      <CourseTest
+        course={testCourse}
+        onClose={closeTest}
+        onTestComplete={onTestComplete}
+      />
+    )
+  }
 
   return (
     <>
-      <div className="page-header"><h1>AI Recommendations</h1><p>Personalized suggestions to improve your skills</p></div>
-
-      <div className="card" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.06), rgba(180,91,158,0.06))', border: '1px solid rgba(124,58,237,0.12)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ fontSize: '2rem' }}>🎯</div>
-          <div>
-            <div style={{ fontWeight: 700, marginBottom: 2 }}>Weekly Goal</div>
-            <div style={{ color: '#64748B', fontSize: '0.92rem' }}>{data.weeklyGoal}</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="content-grid cols-2">
-        <div className="card">
-          <h3>⚡ Skills to Improve</h3>
-          {data.skillRecommendations.map((r, i) => (
-            <div key={i} style={{ padding: '14px 16px', background: '#fafbfc', borderRadius: 12, marginBottom: 10 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontWeight: 700 }}>{r.skill}</span>
-                <span className="badge high">{r.priority} Priority</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                <span style={{ fontSize: '0.82rem', color: '#64748B' }}>{r.currentLevel}%</span>
-                <div style={{ flex: 1, height: 6, background: '#e2e8f0', borderRadius: 3, position: 'relative' }}>
-                  <div style={{ width: `${r.currentLevel}%`, height: '100%', background: '#dc2626', borderRadius: 3 }}></div>
-                  <div style={{ position: 'absolute', left: `${r.targetLevel}%`, top: -2, width: 2, height: 10, background: '#059669' }}></div>
-                </div>
-                <span style={{ fontSize: '0.82rem', color: '#059669', fontWeight: 600 }}>{r.targetLevel}%</span>
-              </div>
-              <div style={{ fontSize: '0.82rem', color: '#64748B' }}>{r.suggestion}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="card">
-          <h3>📋 Recommended Tasks</h3>
-          {data.taskRecommendations.map((r, i) => (
-            <div key={i} style={{ padding: '14px 16px', background: '#fafbfc', borderRadius: 12, marginBottom: 10 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                <span style={{ fontWeight: 700, fontSize: '0.92rem' }}>{r.title}</span>
-                <span className={`badge ${r.impact === 'High' ? 'high' : 'medium'}`}>{r.impact}</span>
-              </div>
-              <div style={{ fontSize: '0.82rem', color: '#64748B' }}>{r.reason}</div>
-            </div>
-          ))}
-        </div>
+      <div className="page-header">
+        <h1>AI Course Recommendations</h1>
+        <p>Personalized course suggestions based on your profile</p>
       </div>
 
       <div className="card">
-        <h3>🎓 Recommended Courses</h3>
-        <table className="data-table">
-          <thead><tr><th>Course</th><th>Provider</th><th>Duration</th><th>Relevance</th></tr></thead>
-          <tbody>
-            {data.courseRecommendations.map((c, i) => (
-              <tr key={i}>
-                <td style={{ fontWeight: 600 }}>{c.name}</td>
-                <td>{c.provider}</td>
-                <td>{c.duration}</td>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div className="progress-bar"><div className="fill high" style={{ width: `${c.relevance}%` }}></div></div>
-                    <span style={{ fontSize: '0.8rem', color: '#64748B' }}>{c.relevance}%</span>
+        <h3>🎓 Recommended Courses for You</h3>
+        {recommendations.length > 0 ? (
+          <div style={{ display: 'grid', gap: '16px' }}>
+            {recommendations.map((rec, i) => (
+              <div key={i} style={{ padding: '16px', background: '#fafbfc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>{rec.course}</h4>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <a href={rec.link} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+                      View Course
+                    </a>
+                    {completed.has(rec.course) ? (
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <span className="badge high" style={{ alignSelf: 'center' }}>Completed</span>
+                        <button className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }} onClick={() => startTest(rec)}>
+                          Take Test
+                        </button>
+                      </div>
+                    ) : (
+                      <button className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }} onClick={() => markCompleted(rec.course)}>
+                        Mark Completed
+                      </button>
+                    )}
                   </div>
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="card">
-        <h3>💪 Your Strengths</h3>
-        <div style={{ display: 'flex', gap: 16 }}>
-          {data.strengths.map((s, i) => (
-            <div key={i} style={{ flex: 1, padding: '20px', background: 'var(--color-success-bg)', borderRadius: 14, textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', marginBottom: 8 }}>{i === 0 ? '🌟' : '⭐'}</div>
-              <div style={{ fontWeight: 700, marginBottom: 2 }}>{s.skill}</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-success)' }}>{s.score}%</div>
-            </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <p>No recommendations available at this time.</p>
+        )}
       </div>
     </>
+  )
+}
+
+function CourseTest({ course, onClose, onTestComplete }) {
+  const courseName = typeof course === 'string' ? course : course?.course
+  const courseLink = typeof course === 'object' && course?.link ? course.link : null
+  const [questions, setQuestions] = useState([])
+  const [answers, setAnswers] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (!courseName) return
+    setLoading(true)
+    setResult(null)
+    setError(null)
+    const params = new URLSearchParams({ course: courseName })
+    if (courseLink) params.set('link', courseLink)
+    fetch(`${API}/tests?${params.toString()}`)
+      .then(r => r.json())
+      .then(data => {
+        setQuestions(data.questions || [])
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Failed to load test questions', err)
+        setError('Unable to load test questions.')
+        setLoading(false)
+      })
+  }, [courseName, courseLink])
+
+  const updateAnswer = (questionId, value) => {
+    setAnswers(prev => ({ ...prev, [questionId]: value }))
+  }
+
+  const submit = async () => {
+    setSubmitting(true)
+    setError(null)
+    setResult(null)
+
+    try {
+      const payload = {
+        course: courseName,
+        ...(courseLink && { link: courseLink }),
+        answers: questions.map(q => ({ id: q.id, answer: answers[q.id] ?? null })),
+      }
+      const res = await fetch(`${API}/tests/grade`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Failed to grade test')
+      } else {
+        setResult(data)
+        onTestComplete?.({ course: courseName, score: data.score, total: data.total })
+      }
+    } catch (err) {
+      console.error(err)
+      setError('Failed to submit answers.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (loading) return <p>Loading test...</p>
+
+  if (error) return (
+    <div className="card">
+      <h3>Test: {courseName}</h3>
+      <p style={{ color: 'var(--color-danger)' }}>{error}</p>
+      <button className="btn btn-secondary" onClick={onClose}>Back to Recommendations</button>
+    </div>
+  )
+
+  if (result) {
+    return (
+      <div className="card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>Test Results: {courseName}</h3>
+          <button className="btn btn-secondary" onClick={onClose}>Back</button>
+        </div>
+        <p>
+          Score: <strong>{result.score}%</strong> ({result.correct} / {result.total})
+        </p>
+        <div style={{ marginTop: 16 }}>
+          {result.details && result.details.map((d) => (
+            <div key={d.id} style={{ marginBottom: 10, padding: 10, border: '1px solid #e2e8f0', borderRadius: 10, background: '#fff' }}>
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>Question: {questions.find(q => q.id === d.id)?.question}</div>
+              <div>
+                {d.correct ? (
+                  <span style={{ color: 'var(--color-success)' }}>✅ Correct</span>
+                ) : (
+                  <span style={{ color: 'var(--color-danger)' }}>❌ Incorrect</span>
+                )}
+              </div>
+              {d.expected !== undefined && (
+                <div style={{ fontSize: '0.9rem', color: '#64748B' }}>
+                  Expected: {typeof d.expected === 'number' ? questions.find(q => q.id === d.id)?.options?.[d.expected] : d.expected}
+                  {' | '}
+                  Your answer: {typeof d.given === 'number' ? questions.find(q => q.id === d.id)?.options?.[d.given] : d.given}
+                </div>
+              )}
+              {d.expected_keywords && (
+                <div style={{ fontSize: '0.9rem', color: '#64748B' }}>
+                  Expected keywords: {d.expected_keywords.join(', ')}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+          <button className="btn btn-primary" onClick={() => { setResult(null); setAnswers({}) }}>
+            Retake Test
+          </button>
+          <button className="btn btn-secondary" onClick={onClose}>
+            Done
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!questions.length) {
+    return (
+      <div className="card">
+        <h3>Test: {courseName}</h3>
+        <p>No questions found for this topic.</p>
+        <button className="btn btn-secondary" onClick={onClose}>Back</button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3>Test: {courseName}</h3>
+        <button className="btn btn-secondary" onClick={onClose}>Back</button>
+      </div>
+
+      <p>Answer all questions below and submit to see your score.</p>
+
+      <div style={{ display: 'grid', gap: 16 }}>
+        {questions.map((q, idx) => (
+          <div key={q.id} style={{ padding: 16, border: '1px solid #e2e8f0', borderRadius: 12, background: '#fff' }}>
+            <div style={{ fontWeight: 600, marginBottom: 8 }}>{idx + 1}. {q.question}</div>
+            {q.type === 'mcq' ? (
+              <div style={{ display: 'grid', gap: 8 }}>
+                {q.options?.map((opt, optIndex) => (
+                  <label key={optIndex} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name={q.id}
+                      value={optIndex}
+                      checked={answers[q.id] === optIndex}
+                      onChange={() => updateAnswer(q.id, optIndex)}
+                    />
+                    <span>{opt}</span>
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <textarea
+                rows={3}
+                value={answers[q.id] || ''}
+                onChange={e => updateAnswer(q.id, e.target.value)}
+                placeholder="Write your answer here..."
+                style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #cbd5e1' }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {error && <div style={{ color: 'var(--color-danger)', marginTop: 12 }}>{error}</div>}
+
+      <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+        <button className="btn btn-primary" onClick={submit} disabled={submitting}>
+          {submitting ? 'Submitting…' : 'Submit Answers'}
+        </button>
+        <button className="btn btn-secondary" onClick={() => { setAnswers({}); setResult(null); }} disabled={submitting}>
+          Reset
+        </button>
+      </div>
+    </div>
   )
 }
