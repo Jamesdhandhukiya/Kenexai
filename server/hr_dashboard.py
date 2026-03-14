@@ -98,6 +98,7 @@ def hr_interns():
 
 @hr_bp.route('/hr/interns/<id>', methods=['DELETE'])
 def delete_intern(id):
+    global INTERNS
     # Unassign from manager
     intern = next((i for i in INTERNS if str(i["id"]) == str(id)), None)
     if intern and intern.get("manager_id"):
@@ -111,8 +112,6 @@ def delete_intern(id):
         sb_admin.auth.admin.delete_user(id)
     except:
         pass
-        
-    global INTERNS
     # Note: mutating a global list imported from data.py requires accessing the list itself
     # But since we imported the object, modification (pop/remove) works. 
     # To reassign, we need a helper or just remove by identity.
