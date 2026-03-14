@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from data import INTERNS, TASKS, LOGS
+from data import INTERNS, TASKS, LOGS, sb_admin
 from datetime import datetime
 import random
 
@@ -7,21 +7,80 @@ intern_bp = Blueprint('intern', __name__)
 
 @intern_bp.route('/intern/tasks/<id>', methods=['GET'])
 def intern_tasks(id):
-    # Match by email or local ID
-    intern = next((i for i in INTERNS if str(i["id"]) == str(id)), None)
-    name = intern["name"] if intern else "Alex Johnson"
-    return jsonify([t for t in TASKS if t["assignee"] == name])
+    # Fetch profile to get email
+    profile_res = sb_admin.table("profiles").select("email").eq("id", id).execute()
+    if not profile_res.data:
+        return jsonify([])
+    
+    email = profile_res.data[0]["email"]
+    tasks_res = sb_admin.table("silver_tasks").select("*").eq("email", email).execute()
+    
+    mapped_tasks = []
+    for row in tasks_res.data:
+        hw = row.get("hours_actual") or 0
+        he = row.get("hours_estimated") or 1
+        he = he if he > 0 else 1
+        progress = int((hw / he) * 100) if row.get("task_status") != "Completed" else 100
+        
+        mapped_tasks.append({
+            "id": row.get("task_id"),
+            "title": row.get("task_name"),
+            "status": row.get("task_status", "Pending"),
+            "priority": row.get("priority", "Medium"),
+            "progress": min(100, max(0, progress)),
+            "deadline": row.get("deadline", "")
+        })
+    return jsonify(mapped_tasks)
 
 @intern_bp.route('/intern/tasks/<task_id>/progress', methods=['PUT'])
 def update_task_progress(task_id):
-    prog = request.json.get("progress", 0)
-    task = next((t for t in TASKS if str(t["id"]) == str(task_id)), None)
-    if task:
-        task["progress"] = prog
-        if prog == 100: task["status"] = "Completed"
-        elif prog > 0: task["status"] = "In Progress"
-        return jsonify(task)
-    return jsonify({"error": "Task not found"}), 404
+    data = request.json
+    prog = data.get("progress", 0)
+    status = data.get("status")
+    
+    # Fetch task to get hours_estimated
+    task_res = sb_admin.table("silver_tasks").select("*").eq("task_id", task_id).execute()
+    if not task_res.data:
+        return jsonify({"error": "Task not found"}), 404
+        
+    row = task_res.data[0]
+    he = row.get("hours_estimated") or 10
+    
+    update_data = {}
+    
+    if status:
+        update_data["task_status"] = status
+        # Update hours based on status if needed
+        if status in ["Completed", "Approved"]:
+            update_data["hours_actual"] = he
+        elif status == "Pending":
+            update_data["hours_actual"] = 0
+            
+    if prog == 100 and "task_status" not in update_data:
+        update_data["task_status"] = "Completed"
+        update_data["hours_actual"] = he
+    elif prog > 0 and "hours_actual" not in update_data:
+        update_data["hours_actual"] = int(he * (prog / 100))
+        if "task_status" not in update_data:
+            update_data["task_status"] = "In Progress"
+            
+    up_res = sb_admin.table("silver_tasks").update(update_data).eq("task_id", task_id).execute()
+    if up_res.data:
+        updated_row = up_res.data[0]
+        hw = updated_row.get("hours_actual") or 0
+        current_status = updated_row.get("task_status", "Pending")
+        # Final progress calc
+        progress = int((hw / he) * 100) if current_status not in ["Completed", "Approved"] else 100
+        
+        return jsonify({
+            "id": updated_row.get("task_id"),
+            "title": updated_row.get("task_name"),
+            "status": current_status,
+            "priority": updated_row.get("priority", "Medium"),
+            "progress": min(100, max(0, progress)),
+            "deadline": updated_row.get("deadline", "")
+        })
+    return jsonify({"error": "Failed to update"}), 500
 
 @intern_bp.route('/intern/activity/<id>', methods=['GET'])
 def intern_activity_get(id):

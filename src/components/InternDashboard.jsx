@@ -6,6 +6,7 @@ import {
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area
 } from 'recharts'
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { API, COLORS, ProfileDropdown } from './Shared'
 
 const INTERN_MODULES = [
@@ -68,62 +69,112 @@ export default function InternDashboardLayout({ user, onLogout }) {
 
 function InternTasksModule({ internId }) {
   const [tasks, setTasks] = useState([])
-  useEffect(() => { fetch(`${API}/intern/tasks/${internId}`).then(r => r.json()).then(setTasks).catch(() => { }) }, [internId])
+  const [loading, setLoading] = useState(true)
 
-  const updateProgress = async (taskId, newProgress) => {
-    const res = await fetch(`${API}/intern/tasks/${taskId}/progress`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ progress: newProgress }),
-    })
-    const updated = await res.json()
-    setTasks(tasks.map(t => t.id === taskId ? updated : t))
+  const COLUMNS = [
+    { id: 'Pending', title: 'TO DO', color: '#64748B' },
+    { id: 'In Progress', title: 'IN PROGRESS', color: '#7C3AED' },
+    { id: 'Completed', title: 'DONE', color: '#059669' },
+    { id: 'Approved', title: 'APPROVED', color: '#1D4ED8' }
+  ]
+
+  useEffect(() => {
+    fetch(`${API}/intern/tasks/${internId}`)
+      .then(r => r.json())
+      .then(data => {
+        setTasks(data)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [internId])
+
+  const onDragEnd = async (result) => {
+    const { destination, source, draggableId } = result
+    if (!destination) return
+    if (destination.droppableId === source.droppableId && destination.index === source.index) return
+
+    const newStatus = destination.droppableId
+    const updatedTasks = tasks.map(t => t.id === draggableId ? { ...t, status: newStatus } : t)
+    setTasks(updatedTasks)
+
+    try {
+      await fetch(`${API}/intern/tasks/${draggableId}/progress`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus, progress: newStatus === 'Completed' || newStatus === 'Approved' ? 100 : newStatus === 'Pending' ? 0 : 50 }),
+      })
+    } catch (err) {
+      console.error("Failed to update status", err)
+    }
   }
 
-  const completed = tasks.filter(t => t.status === 'Completed').length
-  const inProgress = tasks.filter(t => t.status === 'In Progress').length
-  const pending = tasks.filter(t => t.status === 'Pending').length
+  if (loading) return <div className="loading-state">Loading board...</div>
 
   return (
-    <>
-      <div className="page-header"><h1>My Tasks</h1><p>Tasks assigned to you by your manager</p></div>
-      <div className="stats-grid cols-3">
-        <div className="stat-card"><div className="stat-label">In Progress</div><div className="stat-value">{inProgress}</div></div>
-        <div className="stat-card"><div className="stat-label">Completed</div><div className="stat-value">{completed}</div></div>
-        <div className="stat-card"><div className="stat-label">Pending</div><div className="stat-value">{pending}</div></div>
+    <div className="kanban-module">
+      <div className="page-header">
+        <h1>Task Kanban Board</h1>
+        <p>Drag and drop tasks to update their progress and status</p>
       </div>
-      <div className="card">
-        <h3>Task List</h3>
-        {tasks.length === 0 ? <p style={{ color: '#64748B' }}>No tasks assigned yet.</p> : (
-          <table className="data-table">
-            <thead><tr><th>Task</th><th>Priority</th><th>Status</th><th>Progress</th><th>Deadline</th><th>Action</th></tr></thead>
-            <tbody>
-              {tasks.map(t => (
-                <tr key={t.id}>
-                  <td style={{ fontWeight: 600 }}>{t.title}</td>
-                  <td><span className={`badge ${t.priority.toLowerCase()}`}>{t.priority}</span></td>
-                  <td><span className={`badge ${t.status === 'Completed' ? 'completed' : t.status === 'In Progress' ? 'in-progress' : 'pending'}`}>{t.status}</span></td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div className="progress-bar"><div className={`fill ${t.progress > 60 ? 'high' : t.progress > 30 ? 'med' : 'low'}`} style={{ width: `${t.progress}%` }}></div></div>
-                      <span style={{ fontSize: '0.8rem', color: '#64748B', minWidth: 32 }}>{t.progress}%</span>
-                    </div>
-                  </td>
-                  <td>{t.deadline}</td>
-                  <td>
-                    {t.status !== 'Completed' && (
-                      <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="btn btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }} onClick={() => updateProgress(t.id, Math.min(t.progress + 25, 100))}>+25%</button>
-                        <button className="btn btn-primary" style={{ padding: '6px 12px', fontSize: '0.78rem' }} onClick={() => updateProgress(t.id, 100)}>Done</button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </>
+
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="kanban-board">
+          {COLUMNS.map(col => (
+            <div key={col.id} className="kanban-column">
+              <div className="column-header" style={{ borderTop: `4px solid ${col.color}` }}>
+                <span className="column-status-dot" style={{ backgroundColor: col.color }}></span>
+                <h3>{col.title}</h3>
+                <span className="task-count">{tasks.filter(t => t.status === col.id).length}</span>
+              </div>
+
+              <Droppable droppableId={col.id}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`column-body ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}
+                  >
+                    {tasks.filter(t => t.status === col.id).map((task, index) => (
+                      <Draggable key={task.id} draggableId={task.id} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className={`kanban-card ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                          >
+                            <div className="card-header">
+                              <span className={`card-priority ${task.priority.toLowerCase()}`}>
+                                {task.priority}
+                              </span>
+                              <span className="card-id">{task.id}</span>
+                            </div>
+                            <div className="card-title">{task.title}</div>
+                            <div className="card-footer">
+                              <div className="card-deadline">
+                                <Clock size={12} />
+                                <span>{task.deadline}</span>
+                              </div>
+                              <div className="card-progress">
+                                <div className="progress-mini">
+                                  <div className="fill" style={{ width: `${task.progress}%` }}></div>
+                                </div>
+                                <span>{task.progress}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+          ))}
+        </div>
+      </DragDropContext>
+    </div>
   )
 }
 

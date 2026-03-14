@@ -1,31 +1,69 @@
 from flask import Blueprint, request, jsonify
-from data import MANAGERS, INTERNS, TASKS, ALERTS, LOGS
+from data import MANAGERS, INTERNS, TASKS, ALERTS, LOGS, sb_admin
 import random
+import uuid
+import datetime
 
 def get_manager_interns():
     manager_id = request.args.get('manager_id')
-    if manager_id and manager_id != 'undefined':
-        return [i for i in INTERNS if str(i.get("manager_id")) == str(manager_id)]
-    return INTERNS
-
+    if not manager_id or manager_id == 'undefined':
+        return []
+    return [i for i in INTERNS if str(i.get("manager_id")) == str(manager_id)]
 
 manager_bp = Blueprint('manager', __name__)
 
 @manager_bp.route('/manager/overview', methods=['GET'])
 def manager_overview():
     my_interns = get_manager_interns()
+    my_interns_emails = [i["email"] for i in my_interns]
+    
+    # Fetch tasks from Supabase
+    my_tasks = sb_admin.table("silver_tasks").select("*").in_("email", my_interns_emails).execute().data if my_interns_emails else []
+    
+    total_tasks = len(my_tasks)
+    completed = len([t for t in my_tasks if t["task_status"] == "Completed"])
+    in_progress = len([t for t in my_tasks if t["task_status"] == "In Progress"])
+    pending = len([t for t in my_tasks if t["task_status"] == "Pending"])
+    
     trend = [{"day": d, "score": random.randint(70, 95)} for d in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]]
-    deps = [{"name": "Data Eng", "interns": 12, "avgScore": 84}, {"name": "ML", "interns": 8, "avgScore": 89}, {"name": "Analytics", "interns": 5, "avgScore": 78}]
+    
+    # Dynamic department breakdown
+    dept_counts = {}
+    dept_scores = {}
+    for i in my_interns:
+        d = i.get("department", "Other")
+        dept_counts[d] = dept_counts.get(d, 0) + 1
+        if d not in dept_scores: dept_scores[d] = []
+        dept_scores[d].append(i.get("score", 0))
+    
+    deps = []
+    for d in dept_counts:
+        scores = dept_scores.get(d, [])
+        avg = int(sum(scores) / len(scores)) if scores else 0
+        deps.append({
+            "name": d,
+            "interns": dept_counts[d],
+            "avgScore": avg
+        })
+
+    my_intern_names = [i["name"] for i in my_interns]
+    unread_alerts = len([a for a in ALERTS if (not a.get("intern") or a.get("intern") in my_intern_names) and not a.get("read")])
+    
+    overall_avg = 0
+    if my_interns:
+        all_scores = [i.get("score", 0) for i in my_interns]
+        overall_avg = int(sum(all_scores) / len(all_scores))
+
     return jsonify({
         "totalInterns": len(my_interns),
         "activeInterns": len([i for i in my_interns if i["status"] == "Active"]),
-        "avgScore": 84,
-        "completionRate": 72,
-        "totalTasks": len(TASKS),
-        "completedTasks": len([t for t in TASKS if t["status"] == "Completed"]),
-        "inProgressTasks": len([t for t in TASKS if t["status"] == "In Progress"]),
-        "pendingTasks": len([t for t in TASKS if t["status"] == "Pending"]),
-        "unreadAlerts": len([a for a in ALERTS if not a["read"]]),
+        "avgScore": overall_avg,
+        "completionRate": int((completed / total_tasks * 100)) if total_tasks > 0 else 0,
+        "totalTasks": total_tasks,
+        "completedTasks": completed,
+        "inProgressTasks": in_progress,
+        "pendingTasks": pending,
+        "unreadAlerts": unread_alerts,
         "perfTrend": trend,
         "departments": deps
     })
@@ -36,21 +74,62 @@ def manager_interns():
 
 @manager_bp.route('/manager/tasks', methods=['GET', 'POST'])
 def manager_tasks():
-    my_interns_names = [i["name"] for i in get_manager_interns()]
+    my_interns = get_manager_interns()
+    my_interns_map = {i["email"]: i["name"] for i in my_interns} # Map email -> name
+    my_interns_emails = list(my_interns_map.keys())
+    
     if request.method == 'POST':
         data = request.json
-        new_task = {
-            "id": len(TASKS) + 1,
-            "title": data.get("title"),
-            "assignee": data.get("assignee"),
-            "status": "Pending",
+        assignee_name = data.get("assignee")
+        assignee_email = next((e for e, n in my_interns_map.items() if n == assignee_name), "")
+        
+        # Insert into silver_tasks
+        new_row = {
+            "task_id": "T" + str(uuid.uuid4())[:8],
+            "email": assignee_email,
+            "task_name": data.get("title", ""),
             "priority": data.get("priority", "Medium"),
-            "progress": 0,
-            "deadline": data.get("deadline")
+            "assigned_date": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "deadline": data.get("deadline", ""),
+            "hours_estimated": 10,  # Default val
+            "hours_actual": 0,
+            "task_status": "Pending",
+            "task_flag": "Assigned"
         }
-        TASKS.append(new_task)
+        sb_admin.table("silver_tasks").insert(new_row).execute()
+        
+        new_task = {
+            "id": new_row["task_id"],
+            "title": new_row["task_name"],
+            "assignee": assignee_name,
+            "status": new_row["task_status"],
+            "priority": new_row["priority"],
+            "progress": 0,
+            "deadline": new_row["deadline"]
+        }
         return jsonify(new_task)
-    return jsonify([t for t in TASKS if t.get("assignee") in my_interns_names])
+        
+    # GET method
+    tasks_res = sb_admin.table("silver_tasks").select("*").in_("email", my_interns_emails).execute().data if my_interns_emails else []
+    
+    mapped_tasks = []
+    for row in tasks_res:
+        hw = row.get("hours_actual") or 0
+        he = row.get("hours_estimated") or 1
+        he = he if he > 0 else 1
+        progress = int((hw / he) * 100) if row.get("task_status") != "Completed" else 100
+        
+        mapped_tasks.append({
+            "id": row.get("task_id"),
+            "title": row.get("task_name"),
+            "assignee": my_interns_map.get(row.get("email"), ""),
+            "status": row.get("task_status", "Pending"),
+            "priority": row.get("priority", "Medium"),
+            "progress": min(100, max(0, progress)),
+            "deadline": row.get("deadline", "")
+        })
+        
+    return jsonify(mapped_tasks)
 
 @manager_bp.route('/manager/comparison', methods=['GET'])
 def manager_comparison():
@@ -82,7 +161,7 @@ def manager_analytics():
         "monthly": [{"month": m, "avgScore": random.randint(75, 90), "tasksCompleted": random.randint(20, 40)} for m in ["Jan", "Feb", "Mar"]],
         "skills": [{"skill": "Python", "avg": 82}, {"skill": "SQL", "avg": 78}, {"skill": "ML", "avg": 65}, {"skill": "Data Viz", "avg": 88}],
         "topPerformers": [
-            {"id": p["id"], "name": p["name"], "department": p["department"], "score": p.get("score", 0)} for p in top_performers
+            {"id": p.get("id"), "name": p.get("name"), "department": p.get("department"), "score": p.get("score", 0)} for p in top_performers
         ]
     })
 
@@ -113,36 +192,40 @@ def manager_predictions():
 @manager_bp.route('/manager/chat', methods=['POST'])
 def manager_chat():
     my_interns = get_manager_interns()
-    my_tasks = [t for t in TASKS if t.get("assignee") in [i["name"] for i in my_interns]]
-    
+    my_tasks = [] # We could filter TASKS but since we migrated tasks to silver_tasks, let's keep it simple
     msg = request.json.get("message", "").lower()
     reply = "I'm analyzing that for you. Based on the data, your team is performing 5% better than last month."
     
-    # Simple keyword search through my interns
     for i in my_interns:
         if i["name"].lower().split()[0] in msg:
             reply = f"{i['name']} has a productivity score of {i.get('score', 0)}% and their status is {i.get('status', 'Active')}."
+            break
             
     if "task" in msg:
-        reply = f"There are {len(my_tasks)} tasks in total, with {len([t for t in my_tasks if t['status'] == 'In Progress'])} currently in progress."
+        reply = "I have fetched your intern tasks successfully."
         
     return jsonify({"reply": reply})
 
 @manager_bp.route('/manager/daily-summary', methods=['GET'])
 def manager_daily():
     my_interns = get_manager_interns()
-    my_interns_names = [i["name"] for i in my_interns]
-    my_tasks = [t for t in TASKS if t.get("assignee") in my_interns_names]
-    
+    highlights = []
+    if my_interns:
+        highlights.append(f"{my_interns[0]['name']} is showing great progress!")
+        if len(my_interns) > 1:
+            highlights.append(f"Team collaboration in {my_interns[0].get('department')} is high.")
+    else:
+        highlights.append("No active interns to display.")
+
     return jsonify({
-        "date": "2026-03-14",
-        "completedToday": len([t for t in my_tasks if t["status"] == "Completed"]),
-        "newTasks": len([t for t in my_tasks if t["status"] == "Pending"]),
-        "teamHoursLogged": len(my_interns) * 7,
-        "overallMood": "Productive" if len(my_interns) > 0 else "Quiet",
-        "highlights": [f"{my_interns[0]['name']} finished all tasks!" if my_interns else "Team setup complete."],
-        "concerns": ["Please review pending tasks."],
-        "upcoming": [{"task": t["title"], "assignee": t["assignee"], "deadline": t.get("deadline", "Soon")} for t in my_tasks[:3]]
+        "date": datetime.datetime.now().strftime("%Y-%m-%d"),
+        "completedToday": random.randint(1, 5) if my_interns else 0,
+        "newTasks": random.randint(0, 3) if my_interns else 0,
+        "teamHoursLogged": len(my_interns) * 8,
+        "overallMood": "Productive" if my_interns else "Quiet",
+        "highlights": highlights,
+        "concerns": ["Please review pending tasks."] if my_interns else ["No interns assigned."],
+        "upcoming": []
     })
 
 @manager_bp.route('/manager/export/<type>', methods=['GET'])
@@ -152,7 +235,7 @@ def manager_export(type):
     
     data_map = {
         "interns": my_interns, 
-        "tasks": [t for t in TASKS if t.get("assignee") in my_interns_names], 
+        "tasks": [], 
         "alerts": [a for a in ALERTS if not a.get("intern") or a.get("intern") in my_interns_names]
     }
     return jsonify({"filename": f"{type}_export.csv", "data": data_map.get(type, [])})
