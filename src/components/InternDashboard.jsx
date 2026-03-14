@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react'
 import {
+  ClipboardList, FileText, Zap, LineChart as LineChartIcon, Bot,
+  LogOut, Plus, CheckCircle2, Clock, PlayCircle, Star, TrendingUp, Award
+} from 'lucide-react'
+import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area
 } from 'recharts'
 import { API, COLORS, ProfileDropdown } from './Shared'
 
 const INTERN_MODULES = [
-  { key: 'my-tasks', label: 'My Tasks', icon: '📋' },
-  { key: 'activity', label: 'Daily Activity', icon: '📝' },
-  { key: 'productivity', label: 'Productivity Score', icon: '⚡' },
-  { key: 'growth', label: 'Growth Tracker', icon: '📈' },
-  { key: 'recommendations', label: 'AI Recommendations', icon: '🤖' },
+  { key: 'my-tasks', label: 'My Tasks', icon: ClipboardList },
+  { key: 'activity', label: 'Daily Activity', icon: FileText },
+  { key: 'productivity', label: 'Productivity Score', icon: Zap },
+  { key: 'growth', label: 'Growth Tracker', icon: LineChartIcon },
+  { key: 'recommendations', label: 'AI Recommendations', icon: Bot },
 ]
 
 export default function InternDashboardLayout({ user, onLogout }) {
@@ -30,16 +34,22 @@ export default function InternDashboardLayout({ user, onLogout }) {
   return (
     <div className="dashboard-layout">
       <aside className="sidebar">
-        <div className="sidebar-brand">kenex<span className="accent">ai</span></div>
+        <div className="sidebar-brand">
+          <div className="logo-icon"><TrendingUp size={20} /></div>
+          <div className="brand-text">kenex<span className="accent">ai</span></div>
+        </div>
         <div className="sidebar-section">Intern Dashboard</div>
-        {INTERN_MODULES.map(m => (
-          <button key={m.key} className={`sidebar-link ${active === m.key ? 'active' : ''}`} onClick={() => setActive(m.key)}>
-            <span className="icon">{m.icon}</span>{m.label}
-          </button>
-        ))}
+        {INTERN_MODULES.map(m => {
+          const Icon = m.icon
+          return (
+            <button key={m.key} className={`sidebar-link ${active === m.key ? 'active' : ''}`} onClick={() => setActive(m.key)}>
+              <span className="icon"><Icon size={18} /></span>{m.label}
+            </button>
+          )
+        })}
         <div className="sidebar-bottom">
           <button className="sidebar-link" onClick={onLogout}>
-            <span className="icon">🚪</span>Sign out
+            <span className="icon"><LogOut size={18} /></span>Sign out
           </button>
         </div>
       </aside>

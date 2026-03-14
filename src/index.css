@@ -9,35 +9,51 @@
 }
 
 :root {
-  --color-bg: #F4F7FB;
+  /* Colors - Modern Slate & Indigo Palette */
+  --color-bg: #F8FAFC;
   --color-card: #FFFFFF;
   --color-text: #0F172A;
   --color-text-muted: #64748B;
   --color-input-border: #E2E8F0;
   --color-input-bg: #F8FAFC;
-  --color-accent: #7C3AED;
-  --color-accent-light: #EDE9FE;
-  --color-accent-pink: #B45B9E;
-  --color-btn-start: #15223A;
-  --color-btn-end: #2A3B5C;
-  --hero-start: #7A89DE;
-  --hero-mid: #B45B9E;
-  --hero-end: #15223A;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.03);
-  --shadow-hero: 0 30px 60px rgba(21, 34, 58, 0.18);
-  --radius: 16px;
+  
+  --color-accent: #6366F1;
+  --color-accent-light: #EEF2FF;
+  --color-accent-pink: #EC4899;
+  
+  --color-sidebar-bg: #0F172A;
+  --color-sidebar-hover: rgba(255, 255, 255, 0.05);
+  --color-sidebar-active: #6366F1;
+  
+  --color-btn-start: #6366F1;
+  --color-btn-end: #4F46E5;
+  
+  --hero-start: #6366F1;
+  --hero-mid: #A855F7;
+  --hero-end: #0F172A;
+
+  /* Shadows - Layered & Subtle */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-card: var(--shadow-md);
+  --shadow-hero: 0 20px 50px rgba(99, 102, 241, 0.2);
+
+  /* Spacing & Radii */
+  --radius: 12px;
+  --radius-lg: 24px;
   --sidebar-w: 260px;
-  --navbar-h: 64px;
+  --navbar-h: 72px;
 
   /* Status colors */
-  --color-success: #059669;
-  --color-success-bg: rgba(16, 185, 129, 0.08);
-  --color-warning: #d97706;
-  --color-warning-bg: rgba(245, 158, 11, 0.08);
-  --color-danger: #dc2626;
-  --color-danger-bg: rgba(239, 68, 68, 0.08);
-  --color-info: #1D4ED8;
-  --color-info-bg: rgba(29, 78, 216, 0.08);
+  --color-success: #10B981;
+  --color-success-bg: #ECFDF5;
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FFFBEB;
+  --color-danger: #EF4444;
+  --color-danger-bg: #FEF2F2;
+  --color-info: #3B82F6;
+  --color-info-bg: #EFF6FF;
 }
 
 html,

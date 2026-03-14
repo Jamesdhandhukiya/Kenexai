@@ -10,8 +10,16 @@ def login():
     password = data.get('password')
     
     try:
-        res = sb_anon.auth.sign_in_with_password({"email": email, "password": password})
-        user_id = res.user.id
+        # Verify password directly via database function (bypasses GoTrue issues)
+        verify_res = sb_admin.rpc('verify_user_password', {
+            'user_email': email,
+            'user_password': password
+        }).execute()
+        
+        if not verify_res.data or not verify_res.data[0].get('is_valid'):
+            return jsonify({"success": False, "message": "Invalid credentials"}), 401
+        
+        user_id = verify_res.data[0]['user_id']
         
         profile = sb_admin.table("profiles").select("*").eq("id", user_id).single().execute().data
         if not profile:
@@ -27,7 +35,6 @@ def login():
         assigned_manager = ""
         mgr_id = ""
         if profile["role"] == "intern":
-            # Check if synced in local INTERNS
             local_intern = next((i for i in INTERNS if i["email"] == email), None)
             if local_intern:
                 mgr_id = local_intern.get("manager_id", "")

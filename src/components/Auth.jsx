@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TrendingUp } from 'lucide-react'
 
 const API = 'http://localhost:5000/api'
 
@@ -11,8 +12,8 @@ export function BrainSVG() {
       <defs>
         <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#fff" stopOpacity="0.95" />
-          <stop offset="55%" stopColor="#d8b4fe" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="#f9a8d4" stopOpacity="0.4" />
+          <stop offset="55%" stopColor="#818cf8" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#c026d3" stopOpacity="0.4" />
         </linearGradient>
         <filter id="gl" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="12" result="b" />
@@ -67,7 +68,10 @@ export function LoginPage({ onLogin }) {
     <div className="login-page">
       <div className="login-container">
         <div className="login-card">
-          <div className="login-brand">kenex<span className="accent">ai</span></div>
+          <div className="login-brand">
+            <div className="logo-icon"><TrendingUp size={20} /></div>
+            <div className="brand-text">kenex<span className="accent">ai</span></div>
+          </div>
           <h2>Welcome back</h2>
           <p className="subtitle">Sign in to access your analytics dashboard.</p>
           <form onSubmit={handleSubmit}>

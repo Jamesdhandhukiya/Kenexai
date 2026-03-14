@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import {
+  BarChart as BarChartIcon, Users, ClipboardList, Scale, TrendingUp, Bell,
+  Bot, Newspaper, Download, LogOut, Plus, Search, Filter, 
+  Trash2, ShieldAlert, CheckCircle2, Clock, Globe
+} from 'lucide-react'
+import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area
@@ -7,16 +12,16 @@ import {
 import { API, COLORS, ProfileDropdown } from './Shared'
 
 const MODULES = [
-  { key: 'overview', label: 'Overview', icon: '📊' },
-  { key: 'interns', label: 'Intern Management', icon: '👥' },
-  { key: 'tasks', label: 'Task Assignment', icon: '📋' },
-  { key: 'comparison', label: 'Intern Comparison', icon: '⚖️' },
-  { key: 'analytics', label: 'Performance Analytics', icon: '📈' },
-  { key: 'alerts', label: 'Flags & Alerts', icon: '🔔' },
-  { key: 'predictions', label: 'Predictions', icon: '🔮' },
-  { key: 'chatbot', label: 'AI Chatbot', icon: '🤖' },
-  { key: 'summary', label: 'Daily Summary', icon: '📰' },
-  { key: 'export', label: 'Data Export', icon: '📤' },
+  { key: 'overview', label: 'Overview', icon: BarChartIcon },
+  { key: 'interns', label: 'Intern Management', icon: Users },
+  { key: 'tasks', label: 'Task Assignment', icon: ClipboardList },
+  { key: 'comparison', label: 'Intern Comparison', icon: Scale },
+  { key: 'analytics', label: 'Performance Analytics', icon: TrendingUp },
+  { key: 'alerts', label: 'Flags & Alerts', icon: ShieldAlert },
+  { key: 'predictions', label: 'Predictions', icon: Globe },
+  { key: 'chatbot', label: 'AI Chatbot', icon: Bot },
+  { key: 'summary', label: 'Daily Summary', icon: Newspaper },
+  { key: 'export', label: 'Data Export', icon: Download },
 ]
 
 export default function ManagerDashboardLayout({ user, onLogout }) {
@@ -41,16 +46,22 @@ export default function ManagerDashboardLayout({ user, onLogout }) {
   return (
     <div className="dashboard-layout">
       <aside className="sidebar">
-        <div className="sidebar-brand">kenex<span className="accent">ai</span></div>
-        <div className="sidebar-section">Dashboard</div>
-        {MODULES.map(m => (
-          <button key={m.key} className={`sidebar-link ${active === m.key ? 'active' : ''}`} onClick={() => setActive(m.key)}>
-            <span className="icon">{m.icon}</span>{m.label}
-          </button>
-        ))}
+        <div className="sidebar-brand">
+          <div className="logo-icon"><TrendingUp size={20} /></div>
+          <div className="brand-text">kenex<span className="accent">ai</span></div>
+        </div>
+        <div className="sidebar-section">Manager Dashboard</div>
+        {MODULES.map(m => {
+          const Icon = m.icon
+          return (
+            <button key={m.key} className={`sidebar-link ${active === m.key ? 'active' : ''}`} onClick={() => setActive(m.key)}>
+              <span className="icon"><Icon size={18} /></span>{m.label}
+            </button>
+          )
+        })}
         <div className="sidebar-bottom">
           <button className="sidebar-link" onClick={onLogout}>
-            <span className="icon">🚪</span>Sign out
+            <span className="icon"><LogOut size={18} /></span>Sign out
           </button>
         </div>
       </aside>
@@ -59,7 +70,6 @@ export default function ManagerDashboardLayout({ user, onLogout }) {
         <nav className="navbar">
           <div className="navbar-title">{MODULES.find(m => m.key === active)?.label}</div>
           <div className="navbar-right">
-            <button className="navbar-badge" onClick={() => setActive('alerts')}>🔔<span className="dot"></span></button>
             <ProfileDropdown user={user} onLogout={onLogout} />
           </div>
         </nav>

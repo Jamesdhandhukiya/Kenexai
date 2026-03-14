@@ -45,7 +45,7 @@ def hr_interns():
         if res.data:
             return jsonify({"success": False, "message": "Email already exists"}), 400
 
-        temp_pass = "Admin@123"
+        temp_pass = "intern@123"
         try:
             # Create Supabase Auth user
             auth_res = sb_admin.auth.admin.create_user({
@@ -66,7 +66,8 @@ def hr_interns():
                 "role": "intern",
                 "department": dept,
                 "avatar": avatar,
-                "first_login": True
+                "first_login": False,
+                "manager_id": str(manager_id) if manager_id else None
             }).execute()
             
             # Find manager name
@@ -124,6 +125,42 @@ def delete_intern(id):
     
     return jsonify({"success": True})
 
+@hr_bp.route('/hr/interns/<id>', methods=['PUT'])
+def update_intern(id):
+    data = request.json
+    name = data.get('name')
+    dept = data.get('department')
+    manager_id = data.get('manager_id')
+    
+    intern = next((i for i in INTERNS if str(i["id"]) == str(id)), None)
+    if not intern:
+        return jsonify({"success": False, "message": "Intern not found"}), 404
+    
+    sb_admin.table("profiles").update({
+        "name": name, 
+        "department": dept, 
+        "manager_id": str(manager_id) if manager_id else None
+    }).eq("id", id).execute()
+    
+    old_mgr_id = intern.get("manager_id")
+    if str(old_mgr_id) != str(manager_id):
+        if old_mgr_id:
+            old_mgr = next((m for m in MANAGERS if str(m["id"]) == str(old_mgr_id)), None)
+            if old_mgr: old_mgr["internsManaged"] = max(0, int(old_mgr.get("internsManaged", 0)) - 1)
+        
+        mgr_name = ""
+        if manager_id:
+            new_mgr = next((m for m in MANAGERS if str(m["id"]) == str(manager_id)), None)
+            if new_mgr:
+                new_mgr["internsManaged"] = int(new_mgr.get("internsManaged", 0)) + 1
+                mgr_name = new_mgr["name"]
+        intern["manager_id"] = str(manager_id) if manager_id else ""
+        intern["assigned_manager"] = mgr_name
+
+    intern["name"] = name
+    intern["department"] = dept
+    return jsonify({"success": True, "intern": intern})
+
 @hr_bp.route('/hr/managers', methods=['GET', 'POST'])
 def hr_managers():
     if request.method == 'POST':
@@ -137,7 +174,7 @@ def hr_managers():
         if res.data:
             return jsonify({"success": False, "message": "Email already exists"}), 400
 
-        temp_pass = "Admin@123"
+        temp_pass = "intern@123"
         try:
             auth_res = sb_admin.auth.admin.create_user({
                 "email": email,
@@ -156,7 +193,7 @@ def hr_managers():
                 "role": "manager",
                 "department": dept,
                 "avatar": avatar,
-                "first_login": True
+                "first_login": False
             }).execute()
             
             new_mgr = {
@@ -199,3 +236,23 @@ def delete_manager(id):
     if idx != -1: MANAGERS.pop(idx)
     
     return jsonify({"success": True})
+
+@hr_bp.route('/hr/managers/<id>', methods=['PUT'])
+def update_manager(id):
+    data = request.json
+    name = data.get('name')
+    dept = data.get('department')
+    
+    manager = next((m for m in MANAGERS if str(m["id"]) == str(id)), None)
+    if not manager:
+        return jsonify({"success": False, "message": "Manager not found"}), 404
+    
+    sb_admin.table("profiles").update({"name": name, "department": dept}).eq("id", id).execute()
+    manager["name"] = name
+    manager["department"] = dept
+    
+    for i in INTERNS:
+        if str(i.get("manager_id")) == str(id):
+            i["assigned_manager"] = name
+            
+    return jsonify({"success": True, "manager": manager})

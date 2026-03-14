@@ -25,36 +25,58 @@ app.register_blueprint(intern_bp, url_prefix='/api')
 def sync_supabase():
     try:
         print("Syncing Supabase users to local lists...")
-        db_profiles = sb_admin.table("profiles").select("*").execute().data
-        for p in db_profiles:
-            email = p["email"]
-            if p["role"] == "manager" and not any(m.get("email") == email for m in MANAGERS):
-                MANAGERS.append({
-                    "id": str(p["id"]),
-                    "name": p["name"],
-                    "email": email,
-                    "department": p.get("department", "Data Engineering"),
-                    "status": p.get("status", "Active"),
-                    "joined": p.get("created_at", "2026-03-14")[:10],
-                    "internsManaged": 0,
-                    "avatar": p.get("avatar", ""),
-                })
-            elif p["role"] == "intern" and not any(i.get("email") == email for i in INTERNS):
-                # Try to find if this intern belongs to a manager in local data
-                INTERNS.append({
-                    "id": str(p["id"]),
-                    "name": p["name"],
-                    "email": email,
-                    "department": p.get("department", "Data Engineering"),
-                    "score": 0,
-                    "status": p.get("status", "Active"),
-                    "joined": p.get("created_at", "2026-03-14")[:10],
-                    "avatar": p.get("avatar", ""),
-                    "manager_id": "",
-                    "assigned_manager": ""
-                })
         
-        # After sync, update internsManaged counts
+        # Clear existing lists to ensure we don't duplicate on manual sync
+        MANAGERS.clear()
+        INTERNS.clear()
+        
+        db_profiles = sb_admin.table("profiles").select("*").execute().data
+        
+        # 1. Add/Update Managers
+        for p in db_profiles:
+            if p["role"] == "manager":
+                email = p["email"].lower().strip()
+                if not any(m.get("email", "").lower().strip() == email for m in MANAGERS):
+                    MANAGERS.append({
+                        "id": str(p["id"]),
+                        "name": p["name"],
+                        "email": p["email"],
+                        "department": p.get("department", "Data Engineering"),
+                        "status": p.get("status", "Active"),
+                        "joined": p.get("created_at", "2026-03-14")[:10],
+                        "internsManaged": 0,
+                        "avatar": p.get("avatar", ""),
+                    })
+        
+        # 2. Add/Update Interns
+        for p in db_profiles:
+            if p["role"] == "intern":
+                email = p["email"].lower().strip()
+                existing = next((i for i in INTERNS if i.get("email", "").lower().strip() == email), None)
+                if not existing:
+                    INTERNS.append({
+                        "id": str(p["id"]),
+                        "name": p["name"],
+                        "email": p["email"],
+                        "department": p.get("department", "Data Engineering"),
+                        "score": p.get("score", 0),
+                        "status": p.get("status", "Active"),
+                        "joined": p.get("created_at", "2026-03-14")[:10],
+                        "avatar": p.get("avatar", ""),
+                        "manager_id": str(p.get("manager_id", "")) if p.get("manager_id") else "",
+                        "assigned_manager": ""
+                    })
+                else:
+                    existing["manager_id"] = str(p.get("manager_id", "")) if p.get("manager_id") else existing.get("manager_id", "")
+        
+        # 3. Linking Pass
+        for i in INTERNS:
+            if i.get("manager_id"):
+                mgr = next((m for m in MANAGERS if str(m["id"]) == str(i["manager_id"])), None)
+                if mgr:
+                    i["assigned_manager"] = mgr["name"]
+        
+        # 4. update internsManaged counts
         for m in MANAGERS:
             count = len([i for i in INTERNS if str(i.get("manager_id")) == str(m["id"])])
             m["internsManaged"] = count
@@ -66,6 +88,11 @@ def sync_supabase():
 # Perform sync on startup
 with app.app_context():
     sync_supabase()
+
+@app.route('/api/sync', methods=['POST'])
+def manual_sync():
+    sync_supabase()
+    return jsonify({"success": True, "message": "Manual sync completed", "internsCount": len(INTERNS), "managersCount": len(MANAGERS)})
 
 @app.route('/')
 def index():
