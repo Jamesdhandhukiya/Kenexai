@@ -24,7 +24,7 @@ export default function InternDashboardLayout({ user, onLogout }) {
   const renderModule = () => {
     switch (active) {
       case 'my-tasks': return <InternTasksModule internId={internId} />
-      case 'activity': return <InternActivityModule internId={internId} />
+      case 'activity': return <InternActivityModule internId={internId} user={user} />
       case 'productivity': return <InternProductivityModule internId={internId} />
       case 'growth': return <InternGrowthModule internId={internId} />
       case 'recommendations': return <InternRecsModule user={user} />
@@ -178,60 +178,127 @@ function InternTasksModule({ internId }) {
   )
 }
 
-function InternActivityModule({ internId }) {
-  const [logs, setLogs] = useState([])
-  const [form, setForm] = useState({ hours: '', task_worked: '', description: '', blockers: '' })
-  const [submitted, setSubmitted] = useState(false)
+const todayDate = () => new Date().toISOString().slice(0, 10)
 
-  useEffect(() => { fetch(`${API}/intern/activity/${internId}`).then(r => r.json()).then(setLogs).catch(() => { }) }, [internId])
+const INITIAL_PRODUCTIVITY_FORM = {
+  activity_count: '',
+  total_activity_hours: '',
+  courses_enrolled: '',
+  avg_progress: '',
+  avg_test_score: '',
+  total_learning_hours: '',
+  tasks_assigned: '',
+  tasks_completed: '',
+  total_hours_estimated: '',
+  total_hours_actual: '',
+}
+
+function InternActivityModule({ internId, user }) {
+  const [logs, setLogs] = useState([])
+  const [form, setForm] = useState(INITIAL_PRODUCTIVITY_FORM)
+  const [submitted, setSubmitted] = useState(false)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+  const [date] = useState(todayDate())
+
+  useEffect(() => {
+    fetch(`${API}/intern/productivity-log/${internId}`)
+      .then(r => r.json())
+      .then(data => Array.isArray(data) ? setLogs(data) : setLogs([]))
+      .catch(() => setLogs([]))
+  }, [internId])
 
   const submitActivity = async (e) => {
     e.preventDefault()
-    const res = await fetch(`${API}/intern/activity`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, intern_id: internId, hours: parseFloat(form.hours) }),
+    setError(null)
+    setResult(null)
+    const payload = {
+      intern_id: internId,
+      date: date,
+      activity_count: Number(form.activity_count) || 0,
+      total_activity_hours: Number(form.total_activity_hours) || 0,
+      courses_enrolled: Number(form.courses_enrolled) || 0,
+      avg_progress: Number(form.avg_progress) || 0,
+      avg_test_score: Number(form.avg_test_score) || 0,
+      total_learning_hours: Number(form.total_learning_hours) || 0,
+      tasks_assigned: Number(form.tasks_assigned) || 0,
+      tasks_completed: Number(form.tasks_completed) || 0,
+      total_hours_estimated: Number(form.total_hours_estimated) || 0,
+      total_hours_actual: Number(form.total_hours_actual) || 0,
+    }
+    const res = await fetch(`${API}/intern/productivity-log`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
     })
-    const entry = await res.json()
-    setLogs([...logs, entry])
-    setForm({ hours: '', task_worked: '', description: '', blockers: '' })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) {
+      setError(data.error || 'Failed to submit')
+      return
+    }
+    setResult(data)
+    setForm(INITIAL_PRODUCTIVITY_FORM)
     setSubmitted(true)
-    setTimeout(() => setSubmitted(false), 3000)
+    setLogs(prev => [{ ...payload, ...data, date }, ...prev])
+    setTimeout(() => setSubmitted(false), 5000)
   }
 
-  const totalHours = logs.reduce((s, l) => s + (l.hours || 0), 0)
+  const update = (key, value) => setForm(prev => ({ ...prev, [key]: value }))
 
   return (
     <>
-      <div className="page-header"><h1>Daily Activity</h1><p>Log your work for today</p></div>
+      <div className="page-header"><h1>Daily Activity</h1><p>Log your productivity metrics; email and date are set from your account</p></div>
       <div className="stats-grid cols-3">
-        <div className="stat-card"><div className="stat-label">Total Hours (Week)</div><div className="stat-value">{totalHours}h</div></div>
-        <div className="stat-card"><div className="stat-label">Entries Logged</div><div className="stat-value">{logs.length}</div></div>
-        <div className="stat-card"><div className="stat-label">Avg Hours/Day</div><div className="stat-value">{logs.length ? (totalHours / logs.length).toFixed(1) : 0}h</div></div>
+        <div className="stat-card"><div className="stat-label">Logs This Period</div><div className="stat-value">{logs.length}</div></div>
+        <div className="stat-card"><div className="stat-label">Latest Score</div><div className="stat-value">{logs[0]?.productivity_score_percent ?? logs[0] ? (Number(logs[0].productivity_score) * 100).toFixed(1) : '—'}%</div></div>
+        <div className="stat-card"><div className="stat-label">Task Completion Rate</div><div className="stat-value">{logs[0] ? (Number(logs[0].task_completion_rate) * 100).toFixed(1) : '—'}%</div></div>
       </div>
       <div className="content-grid g-2-1">
         <div className="card">
           <h3>📝 Log Today's Work</h3>
-          {submitted && <div style={{ background: 'var(--color-success-bg)', color: 'var(--color-success)', padding: '10px 14px', borderRadius: 10, marginBottom: 16, fontWeight: 500 }}>✅ Activity logged successfully!</div>}
-          <form onSubmit={submitActivity}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div className="form-group"><label>Hours Worked</label><input type="number" step="0.5" min="0" max="12" placeholder="e.g. 7" value={form.hours} onChange={e => setForm({ ...form, hours: e.target.value })} required /></div>
-              <div className="form-group"><label>Task Worked On</label><input placeholder="e.g. ETL Pipeline" value={form.task_worked} onChange={e => setForm({ ...form, task_worked: e.target.value })} required /></div>
+          {error && <div style={{ background: '#fef2f2', color: '#b91c1c', padding: '10px 14px', borderRadius: 10, marginBottom: 16 }}>{error}</div>}
+          {submitted && result && (
+            <div style={{ background: 'var(--color-success-bg)', color: 'var(--color-success)', padding: '12px 14px', borderRadius: 10, marginBottom: 16 }}>
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>✅ Activity logged successfully</div>
+              <div>Productivity score: <strong>{result.productivity_score_percent}%</strong> (Task completion: {(result.task_completion_rate * 100).toFixed(1)}%, Efficiency: {result.task_efficiency?.toFixed(2) ?? '—'})</div>
             </div>
-            <div className="form-group"><label>Description of Work</label><input placeholder="Describe what you completed today…" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} required /></div>
-            <div className="form-group"><label>Blockers (if any)</label><input placeholder="Any blockers or issues? Leave empty if none" value={form.blockers} onChange={e => setForm({ ...form, blockers: e.target.value })} /></div>
+          )}
+          <form onSubmit={submitActivity}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+              <div className="form-group">
+                <label>Email</label>
+                <input type="text" readOnly value={user?.email ?? ''} style={{ background: '#f8fafc', cursor: 'not-allowed' }} />
+              </div>
+              <div className="form-group">
+                <label>Date</label>
+                <input type="text" readOnly value={date} style={{ background: '#f8fafc', cursor: 'not-allowed' }} />
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="form-group"><label>Activity count</label><input type="number" min="0" placeholder="e.g. 5" value={form.activity_count} onChange={e => update('activity_count', e.target.value)} /></div>
+              <div className="form-group"><label>Total activity hours</label><input type="number" step="0.5" min="0" placeholder="e.g. 7" value={form.total_activity_hours} onChange={e => update('total_activity_hours', e.target.value)} /></div>
+              <div className="form-group"><label>Courses enrolled</label><input type="number" min="0" placeholder="e.g. 3" value={form.courses_enrolled} onChange={e => update('courses_enrolled', e.target.value)} /></div>
+              <div className="form-group"><label>Avg progress (%)</label><input type="number" min="0" max="100" step="0.1" placeholder="e.g. 65" value={form.avg_progress} onChange={e => update('avg_progress', e.target.value)} /></div>
+              <div className="form-group"><label>Avg test score (%)</label><input type="number" min="0" max="100" step="0.1" placeholder="e.g. 78" value={form.avg_test_score} onChange={e => update('avg_test_score', e.target.value)} /></div>
+              <div className="form-group"><label>Total learning hours</label><input type="number" step="0.5" min="0" placeholder="e.g. 12" value={form.total_learning_hours} onChange={e => update('total_learning_hours', e.target.value)} /></div>
+              <div className="form-group"><label>Tasks assigned</label><input type="number" min="0" placeholder="e.g. 8" value={form.tasks_assigned} onChange={e => update('tasks_assigned', e.target.value)} /></div>
+              <div className="form-group"><label>Tasks completed</label><input type="number" min="0" placeholder="e.g. 5" value={form.tasks_completed} onChange={e => update('tasks_completed', e.target.value)} /></div>
+              <div className="form-group"><label>Total hours estimated</label><input type="number" step="0.5" min="0" placeholder="e.g. 40" value={form.total_hours_estimated} onChange={e => update('total_hours_estimated', e.target.value)} /></div>
+              <div className="form-group"><label>Total hours actual</label><input type="number" step="0.5" min="0" placeholder="e.g. 38" value={form.total_hours_actual} onChange={e => update('total_hours_actual', e.target.value)} /></div>
+            </div>
             <button type="submit" className="btn btn-primary" style={{ marginTop: 8 }}>Submit Activity Log</button>
           </form>
         </div>
         <div className="card">
-          <h3>Recent Logs</h3>
-          {logs.slice(-5).reverse().map((l, i) => (
-            <div key={i} style={{ padding: '12px 0', borderBottom: i < 4 ? '1px solid #f1f5f9' : 'none' }}>
+          <h3>Recent logs</h3>
+          {logs.length === 0 && <p style={{ color: '#64748B', fontSize: '0.9rem' }}>No productivity logs yet. Submit the form to see your score here.</p>}
+          {logs.slice(0, 7).map((l, i) => (
+            <div key={i} style={{ padding: '12px 0', borderBottom: i < 6 ? '1px solid #f1f5f9' : 'none' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontWeight: 600, fontSize: '0.88rem' }}>{l.task_worked}</span>
-                <span style={{ fontSize: '0.78rem', color: '#64748B' }}>{l.hours}h</span>
+                <span style={{ fontWeight: 600, fontSize: '0.88rem' }}>{l.date}</span>
+                <span style={{ fontSize: '0.78rem', color: '#7C3AED', fontWeight: 600 }}>{l.productivity_score_percent ?? (l.productivity_score != null ? (Number(l.productivity_score) * 100).toFixed(1) : '—')}%</span>
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#64748B' }}>{l.description}</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 2 }}>{l.date}</div>
+              <div style={{ fontSize: '0.82rem', color: '#64748B' }}>Tasks: {l.tasks_completed ?? '—'}/{l.tasks_assigned ?? '—'} · Activity hrs: {l.total_activity_hours ?? '—'}</div>
             </div>
           ))}
         </div>
@@ -245,16 +312,19 @@ function InternProductivityModule({ internId }) {
   useEffect(() => { fetch(`${API}/intern/productivity/${internId}`).then(r => r.json()).then(setData).catch(() => { }) }, [internId])
   if (!data) return <p>Loading…</p>
 
+  // taskCompletionRate from API is already 0–100; taskEfficiency is ratio so convert to 0–100 for display
+  const completionPct = data.taskCompletionRate != null ? Math.round(Number(data.taskCompletionRate)) : (data.onTimeRate ?? 0)
+  const efficiencyPct = data.taskEfficiency != null ? Math.min(100, Math.round(Number(data.taskEfficiency) * 100)) : (data.onTimeRate ?? 0)
   const kpis = [
-    { label: 'Task Completion', value: data.taskCompletionRate, color: '#7C3AED' },
-    { label: 'On-Time Rate', value: data.onTimeRate, color: '#1D4ED8' },
-    { label: 'Quality Score', value: data.qualityScore, color: '#059669' },
-    { label: 'Consistency', value: data.consistency, color: '#d97706' },
+    { label: 'Task Completion Rate', value: completionPct, color: '#7C3AED' },
+    { label: 'Task Efficiency', value: efficiencyPct, color: '#1D4ED8' },
+    { label: 'Quality (Avg Test Score)', value: data.qualityScore ?? 0, color: '#059669' },
+    { label: 'Consistency', value: data.consistency ?? 0, color: '#d97706' },
   ]
 
   return (
     <>
-      <div className="page-header"><h1>Productivity Score</h1><p>Your auto-calculated KPI breakdown</p></div>
+      <div className="page-header"><h1>Productivity Score</h1><p>Your auto-calculated KPI breakdown from daily activity logs</p></div>
       <div className="stats-grid cols-4">
         <div className="stat-card" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.06), rgba(180,91,158,0.06))', border: '1px solid rgba(124,58,237,0.1)' }}>
           <div className="stat-label">Overall Score</div><div className="stat-value" style={{ color: '#7C3AED' }}>{data.overall}%</div>
@@ -262,33 +332,50 @@ function InternProductivityModule({ internId }) {
         </div>
         <div className="stat-card"><div className="stat-label">Total Tasks</div><div className="stat-value">{data.totalTasks}</div><div className="stat-sub">{data.completedTasks} completed</div></div>
         <div className="stat-card"><div className="stat-label">In Progress</div><div className="stat-value">{data.inProgressTasks}</div><div className="stat-sub">{data.avgProgress}% avg progress</div></div>
-        <div className="stat-card"><div className="stat-label">On-Time Rate</div><div className="stat-value">{data.onTimeRate}%</div><div className="stat-sub up">↑ 3% this week</div></div>
+        <div className="stat-card">
+          <div className="stat-label">Predicted next week</div>
+          <div className="stat-value" style={{ color: data.predictedProductivityNextWeek != null ? '#059669' : '#94a3b8' }}>
+            {data.predictedProductivityNextWeek != null ? `${data.predictedProductivityNextWeek}%` : '—'}
+          </div>
+          <div className="stat-sub">From your recent history</div>
+        </div>
       </div>
       <div className="content-grid cols-2">
         <div className="card">
           <h3>Weekly Productivity Trend</h3>
+          <p style={{ fontSize: '0.85rem', color: '#64748B', marginTop: -4, marginBottom: 12 }}>Past 7 days · scores from your activity logs</p>
           <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={data.weekly}>
-              <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#7C3AED" stopOpacity={0.25} /><stop offset="100%" stopColor="#7C3AED" stopOpacity={0} /></linearGradient></defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="day" tick={{ fontSize: 12 }} />
-              <YAxis domain={[50, 100]} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Area type="monotone" dataKey="score" stroke="#7C3AED" fill="url(#pg)" strokeWidth={2.5} />
-            </AreaChart>
+            <LineChart data={data.weekly || []} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="weeklyFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#7C3AED" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#7C3AED" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis dataKey="day" tick={{ fontSize: 12 }} axisLine={{ stroke: '#e2e8f0' }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} width={28} />
+              <Tooltip
+                contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0' }}
+                formatter={(value) => [`${value}%`, 'Score']}
+                labelFormatter={(label, payload) => payload[0]?.payload?.date ? `${payload[0].payload.date} (${label})` : label}
+              />
+              <Area type="monotone" dataKey="score" fill="url(#weeklyFill)" stroke="none" />
+              <Line type="monotone" dataKey="score" stroke="#7C3AED" strokeWidth={2.5} dot={{ r: 4, fill: '#7C3AED', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#fff', stroke: '#7C3AED', strokeWidth: 2 }} />
+            </LineChart>
           </ResponsiveContainer>
         </div>
         <div className="card">
           <h3>KPI Breakdown</h3>
           {kpis.map(k => (
             <div className="skill-bar-group" key={k.label}>
-              <div className="skill-bar-label"><span>{k.label}</span><span style={{ fontWeight: 700 }}>{k.value}%</span></div>
-              <div className="skill-bar"><div className="fill" style={{ width: `${k.value}%`, background: k.color }}></div></div>
+              <div className="skill-bar-label"><span>{k.label}</span><span style={{ fontWeight: 700 }}>{typeof k.value === 'number' ? k.value : '—'}%</span></div>
+              <div className="skill-bar"><div className="fill" style={{ width: `${Math.min(100, (typeof k.value === 'number' ? k.value : 0))}%`, background: k.color }}></div></div>
             </div>
           ))}
           <div style={{ marginTop: 20, padding: '14px 16px', background: '#fafbfc', borderRadius: 12 }}>
             <div style={{ fontSize: '0.82rem', color: '#64748B', marginBottom: 4 }}>How it's calculated</div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>30% Task Completion + 25% On-Time + 25% Quality + 20% Consistency</div>
+            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>30% Task completion + 20% Task efficiency + 20% Avg progress + 20% Avg test score + 10% Activity hours (capped at 8h)</div>
           </div>
         </div>
       </div>
