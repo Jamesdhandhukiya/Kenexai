@@ -768,28 +768,266 @@ def manager_predictions():
     
     return jsonify(data)
 
+
 @manager_bp.route('/manager/chat', methods=['POST'])
 def manager_chat():
-    my_interns = get_manager_interns()
-    msg = request.json.get("message", "").lower()
-    reply = "I'm analyzing that for you. Based on the data, your team is performing well overall."
+    """
+    AI Chatbot powered by OpenRouter.
+    Fetches intern data from gold_users + silver_tasks + silver_course_progress,
+    builds a context prompt, and sends to OpenRouter for a natural language answer.
+    """
+    import os
+    import requests as http_requests
     
-    for i in my_interns:
-        if i["name"].lower().split()[0] in msg:
-            reply = f"{i['name']} has a productivity score of {i.get('score', 0)}% and their status is {i.get('status', 'Active')}."
-            break
-            
-    if "task" in msg:
-        reply = "I have fetched your intern tasks successfully."
+    try:
+        data = request.json
+        user_msg = (data.get("message") or data.get("query") or "").strip()
+        if not user_msg:
+            return jsonify({"reply": "Please ask me a question about your interns."})
         
-    return jsonify({"reply": reply})
+        my_interns = get_manager_interns()
+        if not my_interns:
+            return jsonify({"reply": "No interns are currently assigned to you."})
+        
+        intern_emails = [i["email"] for i in my_interns]
+        intern_names = [i["name"] for i in my_interns]
+        
+        # 1. gold_users table (primary intern profiles)
+        gold_data = []
+        try:
+            gold_res = sb_admin.table("gold_users").select("*").in_("email", intern_emails).execute()
+            gold_data = gold_res.data or []
+        except Exception as e:
+            print(f"[Chatbot] gold_users fetch failed: {e}")
+        
+        # 2. silver_tasks (task performance data)
+        tasks_data = []
+        try:
+            tasks_res = sb_admin.table("silver_tasks").select("*").in_("email", intern_emails).execute()
+            tasks_data = tasks_res.data or []
+        except Exception as e:
+            print(f"[Chatbot] silver_tasks fetch failed: {e}")
+        
+        # 3. silver_course_progress (learning data)
+        course_data = []
+        try:
+            course_res = sb_admin.table("silver_course_progress").select("*").in_("email", intern_emails).execute()
+            course_data = course_res.data or []
+        except Exception as e:
+            print(f"[Chatbot] silver_course_progress fetch failed: {e}")
+        
+        # Build context string
+        context_parts = []
+        context_parts.append(f"You are KenexAI, an intelligent assistant for intern managers.")
+        context_parts.append(f"The manager currently oversees {len(my_interns)} interns: {', '.join(intern_names)}.")
+        
+        if gold_data:
+            context_parts.append("\n--- GOLD USERS TABLE (Intern Profiles) ---")
+            for g in gold_data:
+                parts = []
+                for key, val in g.items():
+                    if val is not None and val != "" and key not in ["id", "created_at", "updated_at"]:
+                        parts.append(f"{key}: {val}")
+                context_parts.append(f"  {', '.join(parts)}")
+        
+        if tasks_data:
+            context_parts.append("\n--- SILVER TASKS TABLE (Task Performance) ---")
+            from collections import defaultdict as dd
+            tasks_by_email = dd(list)
+            for t in tasks_data:
+                tasks_by_email[t.get("email", "")].append(t)
+            
+            for email, tasks in tasks_by_email.items():
+                name = next((i["name"] for i in my_interns if i["email"] == email), email)
+                total = len(tasks)
+                completed = len([t for t in tasks if t.get("task_status") == "Completed"])
+                in_prog = len([t for t in tasks if t.get("task_status") == "In Progress"])
+                blocked = len([t for t in tasks if t.get("task_status") == "Blocked"])
+                scores = [t.get("task_score", 0) or 0 for t in tasks]
+                avg_score = round(sum(scores) / len(scores)) if scores else 0
+                quality = [t.get("quality_rating", 0) or 0 for t in tasks]
+                avg_quality = round(sum(quality) / len(quality), 1) if quality else 0
+                delays = [t.get("delay_days", 0) or 0 for t in tasks]
+                avg_delay = round(sum(delays) / len(delays), 1) if delays else 0
+                tech_stacks = list(set(t.get("tech_stack", "") for t in tasks if t.get("tech_stack")))
+                
+                context_parts.append(
+                    f"  {name}: {total} tasks (completed: {completed}, in-progress: {in_prog}, blocked: {blocked}), "
+                    f"avg score: {avg_score}, avg quality: {avg_quality}/5, avg delay: {avg_delay}d, "
+                    f"tech: {', '.join(tech_stacks[:5]) if tech_stacks else 'N/A'}"
+                )
+                
+                active = [t for t in tasks if t.get("task_status") in ["Pending", "Not Started", "In Progress"]]
+                if active:
+                    context_parts.append(f"  Active tasks for {name}:")
+                    for t in active[:5]:
+                        context_parts.append(
+                            f"    - {t.get('task_name', 'Unknown')} [{t.get('task_status')}] "
+                            f"priority: {t.get('priority', 'Medium')}, deadline: {t.get('deadline', 'N/A')}"
+                        )
+        
+        if course_data:
+            context_parts.append("\n--- SILVER COURSE PROGRESS (Learning) ---")
+            for c in course_data:
+                name = c.get("name", c.get("email", "Unknown"))
+                context_parts.append(
+                    f"  {name}: score {c.get('score', 0)}%, "
+                    f"completed courses: {c.get('completed_courses', 0)}, "
+                    f"category: {c.get('category', 'N/A')}, "
+                    f"progress: {c.get('progress_percentage', 0)}%"
+                )
+        
+        full_context = "\n".join(context_parts)
+        
+        # Call OpenRouter API
+        api_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
+        model = (os.getenv("OPENROUTER_MODEL") or "gpt-4o-mini").strip()
+        
+        if not api_key:
+            return _fallback_chat(user_msg, my_interns, tasks_data, course_data)
+        
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://kenexai.com",
+            "X-Title": "KenexAI Manager Dashboard"
+        }
+        
+        payload = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an analytics assistant for intern managers.\n"
+                        "You have access to real-time data from the company database.\n"
+                        "CRITICAL RULES:\n"
+                        "1. Answer queries directly using the provided data.\n"
+                        "2. If asked a conversational greeting (e.g. 'hi', 'hello'), respond politely and offer help.\n"
+                        "3. Do not provide unrelated context, conversational filler, or nearby information when answering data requests.\n"
+                        "4. Use structured Markdown lists, bold text, and tables when applicable.\n"
+                        "5. If asked for a specific intern's data, provide only that intern's data.\n"
+                        "6. If asked about something and you do not have the data, state 'No data available.'\n\n"
+                        f"{full_context}"
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": user_msg
+                }
+            ],
+            "max_tokens": 800,
+            "temperature": 0.5
+        }
+        
+        try:
+            response = http_requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+        except Exception as api_err:
+            print(f"[Chatbot] OpenRouter request exception: {str(api_err)}")
+            return _fallback_chat(user_msg, my_interns, tasks_data, course_data)
+        
+        if response.status_code == 200:
+            result = response.json()
+            reply = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            if reply:
+                return jsonify({"reply": reply})
+            else:
+                return jsonify({"reply": "I received the data but couldn't generate a response. Please try again."})
+        else:
+            print(f"[Chatbot] OpenRouter error {response.status_code}: {response.text[:300]}")
+            return _fallback_chat(user_msg, my_interns, tasks_data, course_data)
+    
+    except Exception as e:
+        import traceback
+        err_msg = traceback.format_exc()
+        print(f"[Chatbot] Error: {err_msg}")
+        return jsonify({"reply": f"I encountered an error processing your request:\n```\n{e}\n```"}), 200
+
+
+def _fallback_chat(msg, interns, tasks, courses):
+    """Basic rule-based fallback when OpenRouter API key is not set."""
+    msg_lower = msg.lower()
+    
+    for i in interns:
+        first_name = i["name"].lower().split()[0]
+        if first_name in msg_lower:
+            i_tasks = [t for t in tasks if t.get("email") == i["email"]]
+            completed = len([t for t in i_tasks if t.get("task_status") == "Completed"])
+            total = len(i_tasks)
+            scores = [t.get("task_score", 0) or 0 for t in i_tasks]
+            avg = round(sum(scores) / len(scores)) if scores else 0
+            
+            reply = (
+                f"**{i['name']}** ({i.get('department', 'N/A')})\n\n"
+                f"- Tasks: {completed}/{total} completed\n"
+                f"- Avg Task Score: {avg}%\n"
+                f"- Status: {i.get('status', 'Active')}\n"
+            )
+            
+            i_courses = [c for c in courses if c.get("email") == i["email"]]
+            if i_courses:
+                for c in i_courses:
+                    reply += f"- Learning: {c.get('category', 'N/A')} - {c.get('score', 0)}% score, {c.get('completed_courses', 0)} courses done\n"
+            
+            return jsonify({"reply": reply})
+    
+    if any(w in msg_lower for w in ["top", "best", "performer"]):
+        intern_scores = []
+        for i in interns:
+            i_tasks = [t for t in tasks if t.get("email") == i["email"]]
+            scores = [t.get("task_score", 0) or 0 for t in i_tasks]
+            avg = round(sum(scores) / len(scores)) if scores else 0
+            intern_scores.append((i["name"], avg, len(i_tasks)))
+        intern_scores.sort(key=lambda x: x[1], reverse=True)
+        
+        reply = "**Top Performers:**\n\n"
+        for idx, (name, score, total) in enumerate(intern_scores[:5]):
+            reply += f"{idx+1}. **{name}**: {score}% avg score ({total} tasks)\n"
+        return jsonify({"reply": reply})
+    
+    if any(w in msg_lower for w in ["pending", "blocked", "overdue"]):
+        pending = [t for t in tasks if t.get("task_status") in ["Pending", "Not Started", "In Progress", "Blocked"]]
+        name_map = {i["email"]: i["name"] for i in interns}
+        
+        reply = f"**Active Tasks ({len(pending)}):**\n\n"
+        for t in pending[:10]:
+            assignee = name_map.get(t.get("email"), "Unknown")
+            reply += f"- **{t.get('task_name', 'N/A')}** - {assignee} [{t.get('task_status')}] Priority: {t.get('priority', 'Medium')}\n"
+        return jsonify({"reply": reply})
+    
+    if any(w in msg_lower for w in ["summary", "overview", "how"]):
+        total_tasks = len(tasks)
+        completed = len([t for t in tasks if t.get("task_status") == "Completed"])
+        reply = (
+            "**Team Summary:**\n\n"
+            f"- **{len(interns)}** interns under your management\n"
+            f"- **{total_tasks}** total tasks, **{completed}** completed ({round(completed/total_tasks*100) if total_tasks else 0}%)\n"
+            f"- Active interns: {', '.join(i['name'] for i in interns[:5])}\n"
+        )
+        return jsonify({"reply": reply})
+    
+    return jsonify({
+        "reply": (
+            "I can help you with:\n\n"
+            "- **Intern details** - ask about any intern by name\n"
+            "- **Top performers** - \"Who are the best performers?\"\n"
+            "- **Pending tasks** - \"Show pending tasks\"\n"
+            "- **Team summary** - \"Give me a team overview\"\n\n"
+            "*Note: Set OPENROUTER_API_KEY in your .env file for full AI-powered responses.*"
+        )
+    })
+
 
 @manager_bp.route('/manager/daily-summary', methods=['GET'])
 def manager_daily():
     my_interns = get_manager_interns()
     all_tasks = _fetch_silver_tasks(my_interns)
     
-    # Real data summary
     completed_tasks = [t for t in all_tasks if t.get("task_status") == "Completed"]
     in_progress = [t for t in all_tasks if t.get("task_status") == "In Progress"]
     blocked = [t for t in all_tasks if t.get("task_status") == "Blocked"]
@@ -800,26 +1038,25 @@ def manager_daily():
     if completed_tasks:
         top_score_task = max(completed_tasks, key=lambda t: t.get("task_score", 0) or 0)
         intern = next((i for i in my_interns if i["email"] == top_score_task.get("email")), {})
-        highlights.append(f"🌟 Highest score: {intern.get('name', 'Unknown')} scored {top_score_task.get('task_score', 0)} on '{top_score_task.get('task_name', '')}'")
+        highlights.append(f"Highest score: {intern.get('name', 'Unknown')} scored {top_score_task.get('task_score', 0)} on '{top_score_task.get('task_name', '')}'")
     
     if in_progress:
-        highlights.append(f"📊 {len(in_progress)} tasks currently in progress across the team")
+        highlights.append(f"{len(in_progress)} tasks currently in progress across the team")
     
     if len(my_interns) > 0:
-        highlights.append(f"👥 {len(my_interns)} interns actively being managed")
+        highlights.append(f"{len(my_interns)} interns actively being managed")
 
     concerns = []
     if blocked:
-        concerns.append(f"⚠️ {len(blocked)} tasks are currently blocked and need attention")
+        concerns.append(f"{len(blocked)} tasks are currently blocked and need attention")
     
     delayed = [t for t in all_tasks if (t.get("delay_days", 0) or 0) > 0]
     if delayed:
-        concerns.append(f"⏰ {len(delayed)} tasks have delays (avg {round(sum(t.get('delay_days', 0) or 0 for t in delayed) / len(delayed), 1)} days)")
+        concerns.append(f"{len(delayed)} tasks have delays (avg {round(sum(t.get('delay_days', 0) or 0 for t in delayed) / len(delayed), 1)} days)")
     
     if not concerns:
-        concerns.append("✅ No critical concerns at this time")
+        concerns.append("No critical concerns at this time")
 
-    # Upcoming deadlines
     upcoming = []
     for t in all_tasks:
         if t.get("task_status") not in ["Completed"] and t.get("deadline"):
@@ -846,101 +1083,15 @@ def manager_daily():
         "upcoming": upcoming[:10]
     })
 
+
 @manager_bp.route('/manager/export/<type>', methods=['GET'])
 def manager_export(type):
     my_interns = get_manager_interns()
-    my_interns_names = [i["name"] for i in my_interns]
     
     if type == "tasks":
         all_tasks = _fetch_silver_tasks(my_interns)
         data = all_tasks
-    elif type == "interns":
-        data = my_interns
     else:
-        data = [a for a in ALERTS if not a.get("intern") or a.get("intern") in my_interns_names]
+        data = my_interns
     
     return jsonify({"filename": f"{type}_export.csv", "data": data})
-
-@manager_bp.route('/manager/chatbot', methods=['POST'])
-def manager_chatbot():
-    try:
-        data = request.json
-        query = (data.get("query") or "").lower()
-        
-        my_interns = get_manager_interns()
-        if not my_interns:
-            return jsonify({"reply": "I couldn't find any interns assigned to you."})
-            
-        intern_emails = [i["email"] for i in my_interns]
-        
-        # Helper to find email matching user string
-        def _match_email(user_str):
-            for i in my_interns:
-                if user_str in i["name"].lower() or user_str in i["email"].lower():
-                    return i["email"]
-            return None
-
-        # 1. Top performing interns
-        if "top-performing" in query or "top performing" in query or "best interns" in query:
-            res = sb_admin.table("silver_course_progress").select("name,score").in_("email", intern_emails).order("score", desc=True).limit(5).execute()
-            if not res.data:
-                return jsonify({"reply": "I couldn't find any performance data for your interns right now."})
-            
-            reply = "Here are your top-performing interns based on their overall scores:\n\n"
-            for idx, row in enumerate(res.data):
-                reply += f"{idx+1}. **{row.get('name', 'Unknown')}**: {row.get('score', 0)}%\n"
-            return jsonify({"reply": reply})
-            
-        # 2. Most completed courses
-        if "completed courses" in query or "most completed" in query:
-            res = sb_admin.table("silver_course_progress").select("name,completed_courses").in_("email", intern_emails).order("completed_courses", desc=True).limit(5).execute()
-            if not res.data:
-                return jsonify({"reply": "No course progress found for your interns."})
-            
-            reply = "Here are the interns with the most completed courses:\n\n"
-            for idx, row in enumerate(res.data):
-                reply += f"{idx+1}. **{row.get('name', 'Unknown')}**: {row.get('completed_courses', 0)} courses\n"
-            return jsonify({"reply": reply})
-            
-        # 3. Pending tasks for [user]
-        m = re.search(r'pending tasks for ([\w\s@.]+)', query)
-        if m:
-            user_raw = m.group(1).strip()
-            email = _match_email(user_raw)
-            if not email:
-                return jsonify({"reply": f"Sorry, I couldn't find any intern matching '{user_raw}' under your management."})
-                
-            res = sb_admin.table("silver_tasks").select("task_name,task_status").eq("email", email).in_("task_status", ["Not Started", "In Progress", "Pending"]).execute()
-            
-            if not res.data:
-                return jsonify({"reply": f"No pending tasks found for {user_raw}."})
-                
-            reply = f"Pending tasks for **{user_raw}**:\n\n"
-            for row in res.data:
-                reply += f"- {row.get('task_name')} ({row.get('task_status')})\n"
-            return jsonify({"reply": reply})
-            
-        # 4. Daily activity hours for [user]
-        m = re.search(r'daily activity hours for ([\w\s@.]+)', query)
-        if m:
-            user_raw = m.group(1).strip()
-            email = _match_email(user_raw)
-            if not email:
-                return jsonify({"reply": f"Sorry, I couldn't find any intern matching '{user_raw}' under your management."})
-                
-            res = sb_admin.table("silver_daily_activity").select("date,hours_logged,activity_type").eq("email", email).order("date", desc=True).limit(5).execute()
-            if not res.data:
-                return jsonify({"reply": f"No daily activity logs found for {user_raw}."})
-                
-            reply = f"Recent daily activity hours for **{user_raw}**:\n\n"
-            for row in res.data:
-                reply += f"- **{row.get('date')}**: {row.get('hours_logged')} hours ({row.get('activity_type')})\n"
-            return jsonify({"reply": reply})
-
-        # Fallback error mapping specifically asked for
-        raise ValueError("Invalid natural language query format or AI generation failure.")
-        
-    except Exception as e:
-        print(f"Chatbot Error: {str(e)}")
-        safe_response = "I encountered an error understanding or running your query. Try asking things like:\n- 'Top-performing interns'\n- 'Interns with most completed courses'\n- 'Pending tasks for [name]'\n- 'Daily activity hours for [name]'"
-        return jsonify({"reply": safe_response}), 200

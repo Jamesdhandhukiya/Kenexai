@@ -11,6 +11,8 @@ import {
 } from 'recharts'
 import { API, COLORS, ProfileDropdown } from './Shared'
 import { OverviewModule, InternInsightsModule, BestPerformersModule, TechAnalyticsModule, ScoreBadge, KPICard } from './ManagerModules'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const MODULES = [
   { key: 'overview', label: 'Overview', icon: BarChartIcon },
@@ -18,7 +20,6 @@ const MODULES = [
   { key: 'insights', label: 'Performance Insights', icon: TrendingUp },
   { key: 'tasks', label: 'Task Assignment', icon: ClipboardList },
   { key: 'comparison', label: 'Intern Comparison', icon: Scale },
-  { key: 'alerts', label: 'Flags & Alerts', icon: ShieldAlert },
   { key: 'chatbot', label: 'AI Chatbot', icon: Bot },
   { key: 'export', label: 'Data Export', icon: Download }
 ]
@@ -33,7 +34,6 @@ export default function ManagerDashboardLayout({ user, onLogout }) {
       case 'insights': return <InternInsightsModule user={user} />
       case 'tasks': return <TaskModule user={user} />
       case 'comparison': return <ComparisonModule user={user} />
-      case 'alerts': return <AlertsModule user={user} />
       case 'chatbot': return <ChatbotModule user={user} />
       case 'export': return <ExportModule user={user} />
       default: return <OverviewModule user={user} />
@@ -419,7 +419,19 @@ function ChatbotModule({ user }) {
       <div className="page-header"><h1>AI Chatbot</h1><p>Ask anything about your team</p></div>
       <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div className="chat-messages">
-          {messages.map((m, i) => <div key={i} className={`chat-bubble ${m.sender}`}>{m.text}</div>)}
+          {messages.map((m, i) => (
+            <div key={i} className={`chat-bubble ${m.sender}`}>
+              {m.sender === 'bot' ? (
+                <div className="markdown-content">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {m.text}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                m.text
+              )}
+            </div>
+          ))}
           <div ref={bottomRef} />
         </div>
         <div className="chat-input-bar">
@@ -486,9 +498,6 @@ function ExportModule({ user }) {
         </div>
         <div className="export-card" onClick={() => downloadJSON('tasks')}>
           <div className="icon">📋</div><h4>Tasks Data</h4><p>Complete task list with progress and deadlines</p>
-        </div>
-        <div className="export-card" onClick={() => downloadJSON('alerts')}>
-          <div className="icon">🔔</div><h4>Alerts Data</h4><p>All alerts and notifications history</p>
         </div>
       </div>
     </>

@@ -950,6 +950,42 @@
   border-bottom-left-radius: 4px;
 }
 
+.markdown-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.markdown-content p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.markdown-content strong {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.markdown-content ul, .markdown-content ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.markdown-content li {
+  margin-bottom: 4px;
+}
+
+.markdown-content code {
+  font-family: 'Consolas', monospace;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+[data-theme='dark'] .markdown-content code {
+  background: rgba(255, 255, 255, 0.1);
+}
 .chat-input-bar {
   display: flex;
   gap: 10px;
